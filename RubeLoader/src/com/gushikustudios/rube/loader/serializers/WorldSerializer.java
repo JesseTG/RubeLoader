@@ -59,10 +59,11 @@ public class WorldSerializer extends ReadOnlySerializer<World>
 		// First joint pass
 		jointSerializer.init(world, bodies, null);
 		Array<Joint> joints = json.readValue("joint", Array.class, Joint.class, jsonData);
+		scene.setJoints(joints);
 		// Second joint pass
 		jointSerializer.init(world, bodies, joints);
 		joints = json.readValue("joint", Array.class, Joint.class, jsonData);
-		scene.setJoints(joints);
+		
 		
 		// Images
 		Array<RubeImage> images = json.readValue("image", Array.class, RubeImage.class, jsonData);
