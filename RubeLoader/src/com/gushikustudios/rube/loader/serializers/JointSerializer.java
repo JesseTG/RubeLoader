@@ -136,6 +136,11 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 			}
 		}
 		scene.parseCustomProperties(json, joint, jsonData);
+		String name = json.readValue("name", String.class, jsonData);
+		if (name != null)
+		{
+		   scene.putNamed(name, joint);
+		}
 		return joint;
 	}
 	

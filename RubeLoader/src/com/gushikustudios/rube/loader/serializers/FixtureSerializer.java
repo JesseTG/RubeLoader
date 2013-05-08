@@ -110,6 +110,11 @@ public class FixtureSerializer extends ReadOnlySerializer<Fixture>
 		Fixture fixture = body.createFixture(def);
 		def.shape.dispose();
 		scene.parseCustomProperties(json, fixture, jsonData);
+		String name = json.readValue("name", String.class, jsonData);
+		if (name != null)
+		{
+		   scene.putNamed(name, fixture);
+		}
 		return fixture;
 	}
 	

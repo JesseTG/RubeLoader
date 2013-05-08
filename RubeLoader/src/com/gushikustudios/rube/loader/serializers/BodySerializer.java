@@ -91,6 +91,12 @@ public class BodySerializer extends ReadOnlySerializer<Body>
 		}
 		scene.parseCustomProperties(json, body, jsonData);
 		
+		String name = json.readValue("name", String.class, jsonData);
+		if (name != null)
+		{
+		   scene.putNamed(name, body);
+		}
+		
 		fixtureSerializer.setBody(body);
 		
 		scene.addFixtures(json.readValue("fixture", Array.class, Fixture.class, jsonData));

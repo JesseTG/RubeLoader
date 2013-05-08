@@ -44,6 +44,11 @@ public class RubeScene
 	private Array<Joint> mJoints;
 	private Array<RubeImage> mImages;
 	
+	private Map<String,Array<Body>> mBodiesByName;
+	private Map<String,Array<Fixture>> mFixturesByName;
+	private Map<String,Array<Joint>> mJointsByName;
+	private Map<String,Array<RubeImage>> mImagesByName;
+	
 	private Map<Object,CustomProperties> mCustomPropertiesMap;
 	
 	private Map<Body,Array<RubeImage>> mBodyImageMap;
@@ -60,8 +65,15 @@ public class RubeScene
 		stepsPerSecond 		= RubeDefaults.World.stepsPerSecond;
 		positionIterations 	= RubeDefaults.World.positionIterations;
 		velocityIterations 	= RubeDefaults.World.velocityIterations;
+		
 		mCustomPropertiesMap = new HashMap<Object, CustomProperties>();
 		mBodyImageMap = new HashMap<Body,Array<RubeImage>>();
+		
+		mBodiesByName = new HashMap<String,Array<Body>>();
+		mFixturesByName = new HashMap<String,Array<Fixture>>();
+		mJointsByName = new HashMap<String,Array<Joint>>();
+		mImagesByName = new HashMap<String,Array<RubeImage>>();
+		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -320,7 +332,93 @@ public class RubeScene
    {
       return mBodyImageMap.get(body);
    }
-
+   
+   public void putNamed(String name, Body body)
+   {
+      Array<Body> bodies = mBodiesByName.get(name);
+      
+      if (bodies == null)
+      {
+         bodies = new Array<Body>(false,1);
+         bodies.add(body);
+         mBodiesByName.put(name,bodies);
+      }
+      else
+      {
+         bodies.add(body);
+      }
+   }
+   
+   public void putNamed(String name, Joint joint)
+   {
+      Array<Joint> joints = mJointsByName.get(name);
+      
+      if (joints == null)
+      {
+         joints = new Array<Joint>(false,1);
+         joints.add(joint);
+         mJointsByName.put(name, joints);
+      }
+      else
+      {
+         joints.add(joint);
+      }
+   }
+   
+   public void putNamed(String name, Fixture fixture)
+   {
+      Array<Fixture> fixtures = mFixturesByName.get(name);
+      
+      if (fixtures == null)
+      {
+         fixtures = new Array<Fixture>(false,1);
+         fixtures.add(fixture);
+         mFixturesByName.put(name, fixtures);
+      }
+      else
+      {
+         fixtures.add(fixture);
+      }
+   }
+   
+   public void putNamed(String name, RubeImage image)
+   {
+      Array<RubeImage> images = mImagesByName.get(name);
+      
+      if (images == null)
+      {
+         images = new Array<RubeImage>(false,1);
+         images.add(image);
+         mImagesByName.put(name,images);
+      }
+      else
+      {
+         images.add(image);
+      }
+   }
+   
+   @SuppressWarnings("unchecked")
+   public <T> Array<T> getNamed(Class<T> type, String name)
+   {
+      if (type == Body.class)
+      {
+         return (Array<T>) mBodiesByName.get(name);
+      }
+      else if (type == Joint.class)
+      {
+         return (Array<T>) mJointsByName.get(name);
+      }
+      else if (type == Fixture.class)
+      {
+         return (Array<T>) mFixturesByName.get(name);
+      }
+      else if (type == RubeImage.class)
+      {
+         return (Array<T>) mImagesByName.get(name);
+      }
+      return null;
+   }
+   
    public void printStats() {
 	   System.out.println("Body count: " + ((mBodies != null) ? mBodies.size : 0));
 	   System.out.println("Fixture count: " + ((mFixtures != null) ? mFixtures.size : 0));

@@ -69,7 +69,11 @@ public class ImageSerializer extends ReadOnlySerializer<RubeImage>
       image.scale = json.readValue("scale", float.class, defaults.scale, jsonData);
       
       scene.parseCustomProperties(json, image, jsonData);
-      
+      String name = json.readValue("name", String.class, jsonData);
+      if (name != null)
+      {
+         scene.putNamed(name, image);
+      }
       return image;
    }
 }

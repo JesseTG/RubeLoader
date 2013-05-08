@@ -127,7 +127,12 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
          }
       }
 
+      // Example of accessing data based on name
+      System.out.println("body0 count: " + scene.getNamed(Body.class, "body0").size);
+      // Note: the scene has two fixture9 names defined, but these are in turn subdivided into multiple fixtures and thus appear several times...
+      System.out.println("fixture9 count: " + scene.getNamed(Fixture.class, "fixture9").size);
       scene.printStats();
+      
       scene.clear(); // no longer need any scene references
    }
 
