@@ -7,8 +7,6 @@ and images.
 This repo contains a fully self-contained Libgdx test for reference.  It also contains a reference
 for Box2DControllers (https://github.com/tescott/box2dcontrollers).
 
-See also https://github.com/cvayer/gdx-rube for a similar solution.
-
 About RUBE
 ==========
 From https://www.iforce2d.net/rube/:
@@ -42,6 +40,7 @@ Several scene objects are created by the loadScene method.  These objects can be
 	* scene.getImages(): This method returns an array of RubeImages defined in the JSON file.  Note: it is up to the app to perform all rendering
 	* scene.getMappedImage(): This method returns an array of all RubeImages associated with a particular Body.
 	* scene.getCustom(): This method allows you to retrieve custom property info from an object.
+	* scene.getNamed(): This method allows you to retrieve a scene object based on name.  Since multiple objects can have the same name, this returns an Array<> type.
 	
 If the scene data is no longer needed, scene.clear() can be executed to free up any references.  Note that this does not alter or delete the world.  It is up
 to the underlying application to handle body deletions from the Box2D physics world.
@@ -81,21 +80,12 @@ Box2dController Setup
 3. Resolve any dependency issues.
 4. Right-click on RubeLoaderTestWithBox2dCotnrollers-desktop > Run As > Java Application > RubeLoaderTestDesktop
 
-Required Software:
+Related Software:
 ==================
 - Eclipse
 - Android SDK
-- RUBE: https://www.iforce2d.net/rube/ (optional)
+- RUBE: https://www.iforce2d.net/rube/ (optional if you wish to create your own scenes)
 - Box2dControllers: https://github.com/tescott/box2dcontrollers (optional)
-
-Limitations
-===========
-Currently does not support retrieving objects by name.
-
-TODO List
-=========
-1. Add handling via object name
-2. Add pinch-zooming for Android target
 
 Screenshot / video of test example
 ==================================
