@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -53,6 +54,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    private Map<Texture, TextureRegion> textureRegionMap;
 
    private static final Vector2 mTmp = new Vector2(); // shared by all objects
+   private static final Vector2 mTmp3 = new Vector2(); // shared during polygon creation
    private SpriteBatch batch;
    private PolygonSpriteBatch polygonBatch;
 
@@ -297,6 +299,52 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               shape.getVertex(k, mTmp);
                               vertices[k * 2] = mTmp.x * PolySpatial.PIXELS_PER_METER;
                               vertices[k * 2 + 1] = mTmp.y * PolySpatial.PIXELS_PER_METER;
+                           }
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           PolySpatial spatial = new PolySpatial(region, body, Color.WHITE);
+                           polySpatials.add(spatial);
+                        }
+                     }
+                     else if (fixture.getType() == Shape.Type.Circle)
+                     {
+                        CircleShape shape = (CircleShape)fixture.getShape();
+                        float radius = shape.getRadius();
+                        int vertexCount = (int)(12f * radius);
+                        float [] vertices = new float[vertexCount*2];
+                        System.out.println("SpatialFactory: radius: " + radius);
+                        if (body.getType() == BodyType.StaticBody)
+                        {
+                           mTmp3.set(shape.getPosition());
+                           for (int k = 0; k < vertexCount; k++)
+                           {
+                              // set the initial position
+                              mTmp.set(radius,0);
+                              // rotate it by 1/vertexCount * k
+                              mTmp.rotate(360f*k/vertexCount);
+                              // add it to the position.
+                              mTmp.rotate(body.getAngle()*MathUtils.radiansToDegrees);
+                              mTmp.add(mTmp3);
+                              mTmp.add(bodyPos); // convert local coordinates to world coordinates to that textures are aligned
+                              vertices[k*2] = mTmp.x*PolySpatial.PIXELS_PER_METER;
+                              vertices[k*2+1] = mTmp.y*PolySpatial.PIXELS_PER_METER;
+                           }
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           PolySpatial spatial = new PolySpatial(region, Color.WHITE);
+                           polySpatials.add(spatial);
+                        }
+                        else
+                        {
+                           mTmp3.set(shape.getPosition());
+                           for (int k = 0; k < vertexCount; k++)
+                           {
+                              // set the initial position
+                              mTmp.set(radius,0);
+                              // rotate it by 1/vertexCount * k
+                              mTmp.rotate(360f*k/vertexCount);
+                              // add it to the position.
+                              mTmp.add(mTmp3);
+                              vertices[k*2] = mTmp.x*PolySpatial.PIXELS_PER_METER;
+                              vertices[k*2+1] = mTmp.y*PolySpatial.PIXELS_PER_METER;
                            }
                            PolygonRegion region = new PolygonRegion(textureRegion, vertices);
                            PolySpatial spatial = new PolySpatial(region, body, Color.WHITE);
