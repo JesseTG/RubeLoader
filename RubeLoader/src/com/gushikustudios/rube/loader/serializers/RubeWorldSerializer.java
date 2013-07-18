@@ -2,6 +2,7 @@ package com.gushikustudios.rube.loader.serializers;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Json.ReadOnlySerializer;
 import com.gushikustudios.rube.RubeDefaults;
 import com.gushikustudios.rube.RubeScene;
@@ -21,7 +22,7 @@ public class RubeWorldSerializer extends ReadOnlySerializer<RubeScene>
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public RubeScene read(Json json, Object jsonData, Class type) 
+	public RubeScene read(Json json, JsonValue jsonData, Class type) 
 	{
 		scene.stepsPerSecond 		= json.readValue("stepsPerSecond", 		int.class, RubeDefaults.World.stepsPerSecond, 		jsonData);
 		scene.positionIterations 	= json.readValue("positionIterations", 	int.class, RubeDefaults.World.positionIterations, 	jsonData);

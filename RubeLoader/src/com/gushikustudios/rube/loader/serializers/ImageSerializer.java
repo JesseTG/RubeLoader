@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Json.ReadOnlySerializer;
 import com.gushikustudios.rube.RubeDefaults;
 import com.gushikustudios.rube.RubeScene;
@@ -22,7 +23,7 @@ public class ImageSerializer extends ReadOnlySerializer<RubeImage>
    
    @SuppressWarnings("rawtypes")
    @Override
-   public RubeImage read(Json json, Object jsonData, Class type)
+   public RubeImage read(Json json, JsonValue jsonData, Class type)
    {
       // Images reference bodies based on indexing in the .json file. -1 means no body reference
       Array<Body> bodies = scene.getBodies();

@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.gushikustudios.rube.loader.serializers.utils.RubeImage;
 
 /**
@@ -77,7 +78,7 @@ public class RubeScene
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void parseCustomProperties(Json json,Object item, Object jsonData)
+	public void parseCustomProperties(Json json,Object item, JsonValue jsonData)
 	{
 		Array<Map<String,?>> customProperties = json.readValue("customProperties", Array.class, HashMap.class, jsonData);
 		if (customProperties != null)
@@ -101,7 +102,7 @@ public class RubeScene
 				}
 				else if (property.containsKey("vec2"))
 				{
-					setCustom(item, propertyName, json.readValue(Vector2.class, property.get("vec2")));
+					setCustom(item, propertyName, json.readValue(Vector2.class, (JsonValue)property.get("vec2")));
 				}
 				else if (property.containsKey("bool"))
 				{

@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Json.ReadOnlySerializer;
 import com.gushikustudios.rube.RubeDefaults;
 import com.gushikustudios.rube.RubeScene;
@@ -38,7 +39,7 @@ public class FixtureSerializer extends ReadOnlySerializer<Fixture>
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Fixture read(Json json, Object jsonData, Class type) 
+	public Fixture read(Json json, JsonValue jsonData, Class type) 
 	{
 		if(body == null)
 			return null;
@@ -122,7 +123,7 @@ public class FixtureSerializer extends ReadOnlySerializer<Fixture>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public CircleShape read(Json json, Object jsonData, Class type)
+		public CircleShape read(Json json, JsonValue jsonData, Class type)
 		{			
 			CircleShape shape = null;
 
@@ -144,7 +145,7 @@ public class FixtureSerializer extends ReadOnlySerializer<Fixture>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public PolygonShape read(Json json, Object jsonData, Class type)
+		public PolygonShape read(Json json, JsonValue jsonData, Class type)
 		{
 			RubeVertexArray vertices = json.readValue("vertices", RubeVertexArray.class, jsonData);
 			
@@ -163,7 +164,7 @@ public class FixtureSerializer extends ReadOnlySerializer<Fixture>
 	{		
 		@SuppressWarnings("rawtypes")
 		@Override
-		public EdgeShape read(Json json, Object jsonData, Class type)
+		public EdgeShape read(Json json, JsonValue jsonData, Class type)
 		{
 			EdgeShape shape = null;
 			
@@ -204,7 +205,7 @@ public class FixtureSerializer extends ReadOnlySerializer<Fixture>
 		
 		@SuppressWarnings("rawtypes")
 		@Override
-		public ChainShape read(Json json, Object jsonData, Class type)
+		public ChainShape read(Json json, JsonValue jsonData, Class type)
 		{
 			ChainShape chain = null;
 			RubeVertexArray vertices = json.readValue("vertices", RubeVertexArray.class, jsonData);

@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Json.ReadOnlySerializer;
 import com.gushikustudios.rube.RubeDefaults;
 import com.gushikustudios.rube.RubeScene;
@@ -39,7 +40,7 @@ public class BodySerializer extends ReadOnlySerializer<Body>
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Body read(Json json, Object jsonData, Class type) 
+	public Body read(Json json, JsonValue jsonData, Class type) 
 	{
 		if(world == null)
 			return null;

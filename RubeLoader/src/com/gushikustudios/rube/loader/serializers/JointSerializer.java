@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.badlogic.gdx.physics.box2d.joints.WheelJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Json.ReadOnlySerializer;
 import com.gushikustudios.rube.RubeDefaults;
 import com.gushikustudios.rube.RubeScene;
@@ -58,7 +59,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Joint read(Json json, Object jsonData, Class type) 
+	public Joint read(Json json, JsonValue jsonData, Class type) 
 	{
 		if(bodies == null || world == null)
 			return null;
@@ -148,7 +149,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public RevoluteJointDef read(Json json, Object jsonData, Class type)
+		public RevoluteJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			RevoluteJointDef defaults = RubeDefaults.Joint.revoluteDef;
 			
@@ -178,7 +179,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public PrismaticJointDef read(Json json, Object jsonData, Class type)
+		public PrismaticJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			PrismaticJointDef defaults = RubeDefaults.Joint.prismaticDef;
 			
@@ -215,7 +216,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public DistanceJointDef read(Json json, Object jsonData, Class type)
+		public DistanceJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			DistanceJointDef defaults = RubeDefaults.Joint.distanceDef;
 			
@@ -241,7 +242,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public PulleyJointDef read(Json json, Object jsonData, Class type)
+		public PulleyJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			PulleyJointDef defaults = RubeDefaults.Joint.pulleyDef;
 			
@@ -275,7 +276,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 		
 		@SuppressWarnings("rawtypes")
 		@Override
-		public MouseJointDef read(Json json, Object jsonData, Class type)
+		public MouseJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			MouseJointDef defaults = RubeDefaults.Joint.mouseDef;
 			
@@ -302,7 +303,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public WeldJointDef read(Json json, Object jsonData, Class type)
+		public WeldJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			WeldJointDef defaults = RubeDefaults.Joint.weldDef;
 			
@@ -326,7 +327,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public FrictionJointDef read(Json json, Object jsonData, Class type)
+		public FrictionJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			FrictionJointDef defaults = RubeDefaults.Joint.frictionDef;
 			
@@ -351,7 +352,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public WheelJointDef read(Json json, Object jsonData, Class type)
+		public WheelJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			WheelJointDef defaults = RubeDefaults.Joint.wheelDef;
 			
@@ -382,7 +383,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public RopeJointDef read(Json json, Object jsonData, Class type)
+		public RopeJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			RopeJointDef defaults = RubeDefaults.Joint.ropeDef;
 			
@@ -406,7 +407,7 @@ public class JointSerializer extends ReadOnlySerializer<Joint>
 	{	
 		@SuppressWarnings("rawtypes")
 		@Override
-		public GearJointDef read(Json json, Object jsonData, Class type)
+		public GearJointDef read(Json json, JsonValue jsonData, Class type)
 		{	
 			if(joints == null )
 				return null;
