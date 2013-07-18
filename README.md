@@ -7,6 +7,8 @@ and images.
 This repo contains a fully self-contained Libgdx test for reference.  It also contains a reference
 for Box2DControllers (https://github.com/tescott/box2dcontrollers).
 
+[Trello Dashboard](https://trello.com/b/JSYQjGY6/rubeloader)
+
 About RUBE
 ==========
 From https://www.iforce2d.net/rube/:
