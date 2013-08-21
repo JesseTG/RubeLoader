@@ -32,6 +32,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.gushikustudios.rube.loader.RubeSceneLoader;
 import com.gushikustudios.rube.loader.serializers.utils.RubeImage;
 
@@ -135,6 +136,52 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       System.out.println("fixture9 count: " + scene.getNamed(Fixture.class, "fixture9").size);
       scene.printStats();
       
+      // 
+      // validate the custom settings attached to world object..
+      //
+      boolean testBool = scene.getCustom(mWorld, "testCustomBool", false);
+      int testInt = scene.getCustom(mWorld, "testCustomInt", 0);
+      float testFloat = scene.getCustom(mWorld, "testCustomFloat", (float)0);
+      Color color = scene.getCustom(mWorld, "testCustomColor", (Color)null);
+      Vector2 vec = scene.getCustom(mWorld, "testCustomVec2", (Vector2)null);
+      String string = scene.getCustom(mWorld, "testCustomString", (String)null);
+      
+      if (testBool == false)
+      {
+         throw new GdxRuntimeException("testCustomBool not read correctly! Expected: " + true + " Actual: " + testBool);
+      }
+      if (testInt != 8675309)
+      {
+         throw new GdxRuntimeException("testCustomInt not read correctly! Expected: " + 8675309 + " Actual: "  + testInt);
+      }
+      if (testFloat != 1.25f)
+      {
+         throw new GdxRuntimeException("testCustomFloat not read correctly! Expected: " + 1.25f + " Actual: " + testFloat);
+      }
+      if (color == null) 
+      {
+         throw new GdxRuntimeException("testCustomColor is reporting null!");
+      }
+      if ((color.r != 17f/255) || (color.g != 29f/255) || (color.b != 43f/255) || (color.a != 1))
+      {
+         throw new GdxRuntimeException("testCustomColor not read correctly!  Expected: " + new Color(17f/255,29f/255,43f/255,61f/255) + " Actual: " + color);
+      }
+      if (vec == null)
+      {
+         throw new GdxRuntimeException("testCustomVec2 is reporting null!");
+      }
+      if ((vec.x != 314159) || (vec.y != 21718))
+      {
+         throw new GdxRuntimeException("testCustomVec2 is not read correctly!  Expected: " + new Vector2(314159,21718) + " Actual: " + vec);
+      }
+      if (string == null)
+      {
+         throw new GdxRuntimeException("testCustomString is reporting null!");
+      }
+      if (!string.equalsIgnoreCase("excelsior!"))
+      {
+         throw new GdxRuntimeException("testCustomString is not read correctly!  Expected: Excelsior! Actual: " + string);
+      }
       scene.clear(); // no longer need any scene references
    }
 

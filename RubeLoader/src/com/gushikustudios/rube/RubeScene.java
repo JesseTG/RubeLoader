@@ -3,6 +3,7 @@ package com.gushikustudios.rube;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -27,6 +28,7 @@ public class RubeScene
       Map<String, String> m_customPropertyMap_string;
       Map<String, Vector2> m_customPropertyMap_Vector2;
       Map<String, Boolean> m_customPropertyMap_bool;
+      Map<String, Color> m_customPropertyMap_color;
       
       public CustomProperties() {
          m_customPropertyMap_int = new HashMap<String, Integer>();
@@ -34,6 +36,7 @@ public class RubeScene
          m_customPropertyMap_string = new HashMap<String, String>();
          m_customPropertyMap_Vector2 = new HashMap<String, Vector2>();
          m_customPropertyMap_bool = new HashMap<String, Boolean>();
+         m_customPropertyMap_color = new HashMap<String, Color>();
       }
    }
    
@@ -98,7 +101,17 @@ public class RubeScene
 				}
 				else if (property.containsKey("float"))
 				{
+				   try
+				   {
 					setCustom(item, propertyName, (Float) property.get("float"));
+				}
+				   catch (Exception ex)
+				   {
+				      // probably a string.
+				      Long hex = Long.parseLong((String)property.get("float"), 16);
+				      Float f = Float.intBitsToFloat(hex.intValue());
+				      setCustom(item, propertyName, f);
+				   }
 				}
 				else if (property.containsKey("vec2"))
 				{
@@ -107,6 +120,11 @@ public class RubeScene
 				else if (property.containsKey("bool"))
 				{
 					setCustom(item, propertyName, (Boolean)property.get("bool"));
+				}
+				else if (property.containsKey("color"))
+				{
+					Array<Float> colorArray = (Array<Float>) property.get("color");
+					setCustom(item, propertyName, new Color(colorArray.get(0)/255, colorArray.get(1)/255, colorArray.get(2)/255, colorArray.get(3)/255));
 				}
 			}
 		}
@@ -153,6 +171,11 @@ public class RubeScene
    public void setCustom(Object item, String propertyName, Vector2 val)
    {
       getCustomPropertiesForItem(item, true).m_customPropertyMap_Vector2.put(propertyName, val);
+   }
+   
+   public void setCustom(Object item, String propertyName, Color color)
+   {
+      getCustomPropertiesForItem(item, true).m_customPropertyMap_color.put(propertyName, color);
    }
    
    
@@ -203,6 +226,18 @@ public class RubeScene
          return defaultVal;
       if (props.m_customPropertyMap_Vector2.containsKey(propertyName))
          return props.m_customPropertyMap_Vector2.get(propertyName);
+      return defaultVal;
+   }
+   
+   public Color getCustom(Object item, String propertyName, Color defaultVal)
+   {
+      CustomProperties props = getCustomPropertiesForItem(item, false);
+      if (null == props)
+         return defaultVal;
+      if (props.m_customPropertyMap_color.containsKey(propertyName))
+      {
+         return props.m_customPropertyMap_color.get(propertyName);
+      }
       return defaultVal;
    }
 	

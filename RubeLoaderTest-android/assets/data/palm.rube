@@ -42,10 +42,38 @@
   [
     
     {
-      "class" : "fixture",
-      "displayName" : "TextureMask",
-      "name" : "TextureMask",
+      "class" : "world",
+      "displayName" : "testCustomString",
+      "name" : "testCustomString",
       "type" : "string"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "testCustomFloat",
+      "name" : "testCustomFloat",
+      "type" : "float"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "testCustomInt",
+      "name" : "testCustomInt",
+      "type" : "int"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "testCustomBool",
+      "name" : "testCustomBool",
+      "type" : "bool"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "testCustomVec2",
+      "name" : "testCustomVec2",
+      "type" : "vec2"
     },
     
     {
@@ -53,6 +81,20 @@
       "displayName" : "GameInfo",
       "name" : "GameInfo",
       "type" : "string"
+    },
+    
+    {
+      "class" : "fixture",
+      "displayName" : "TextureMask",
+      "name" : "TextureMask",
+      "type" : "string"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "testCustomColor",
+      "name" : "testCustomColor",
+      "type" : "color"
     }
   ],
   "metaworld" : 
@@ -60,11 +102,50 @@
     "allowSleep" : true,
     "autoClearForces" : true,
     "continuousPhysics" : true,
+    "customProperties" : 
+    [
+      
+      {
+        "int" : 8675309,
+        "name" : "testCustomInt"
+      },
+      
+      {
+        "float" : 1.25,
+        "name" : "testCustomFloat"
+      },
+      
+      {
+        "name" : "testCustomString",
+        "string" : "Excelsior!"
+      },
+      
+      {
+        "name" : "testCustomVec2",
+        "vec2" : 
+        {
+          "x" : 314159.0,
+          "y" : 21718.0
+        }
+      },
+      
+      {
+        "bool" : true,
+        "name" : "testCustomBool"
+      },
+      
+      {
+        "color" : [ 17, 29, 43, 255 ],
+        "name" : "testCustomColor"
+      }
+    ],
     "exportOptions" : 
     {
+      "compactCommonFloats" : true,
       "saveFullPathForImages" : false,
       "saveImagePathsRelativeToRUBEFile" : false,
-      "useHumanReadableFloats" : true
+      "useHumanReadableFloats" : true,
+      "usePrettyPrint" : true
     },
     "gravity" : 
     {
@@ -111,7 +192,7 @@
                 8.191415786743164,
                 -8.191419601440430
               ],
-              "y" : [ -0.50, -0.50, 0.50, 0.50 ]
+              "y" : [ -0.5, -0.5, 0.5, 0.5 ]
             }
           }
         ],
@@ -249,7 +330,7 @@
             ],
             "density" : 1,
             "filter-categoryBits" : 4,
-            "friction" : 0.50,
+            "friction" : 0.5,
             "id" : 2,
             "name" : "fixture5",
             "shapes" : 
@@ -263,7 +344,7 @@
             {
               "x" : 
               [
-                -0.50,
+                -0.5,
                 100.0,
                 100.0,
                 89.94439697265625,
@@ -276,7 +357,7 @@
                 24.47436714172363,
                 19.93402481079102,
                 9.907413482666016,
-                -0.50
+                -0.5
               ],
               "y" : 
               [
@@ -309,7 +390,7 @@
             ],
             "density" : 1,
             "filter-categoryBits" : 4,
-            "friction" : 0.50,
+            "friction" : 0.5,
             "id" : 3,
             "name" : "fixture6",
             "shapes" : 
@@ -321,7 +402,7 @@
             ],
             "vertices" : 
             {
-              "x" : [ -0.50, 100.0, 100.0, -0.50 ],
+              "x" : [ -0.5, 100.0, 100.0, -0.5 ],
               "y" : [ 49.50, 49.50, 50.50, 50.50 ]
             }
           },
@@ -337,7 +418,7 @@
             ],
             "density" : 1,
             "filter-categoryBits" : 4,
-            "friction" : 0.50,
+            "friction" : 0.5,
             "id" : 4,
             "name" : "fixture0",
             "shapes" : 
@@ -349,7 +430,7 @@
             ],
             "vertices" : 
             {
-              "x" : [ -0.50, 0.50, 0.50, -0.50 ],
+              "x" : [ -0.5, 0.5, 0.5, -0.5 ],
               "y" : [ -50.0, -50.0, 50.0, 50.0 ]
             }
           },
@@ -365,7 +446,7 @@
             ],
             "density" : 1,
             "filter-categoryBits" : 4,
-            "friction" : 0.50,
+            "friction" : 0.5,
             "id" : 5,
             "name" : "fixture7",
             "shapes" : 
@@ -881,7 +962,7 @@
             ],
             "density" : 1,
             "filter-categoryBits" : 4,
-            "friction" : 0.50,
+            "friction" : 0.5,
             "id" : 10,
             "name" : "fixture2",
             "shapes" : 
@@ -923,7 +1004,7 @@
                 0.8417459726333618,
                 1.519700050354004,
                 1.353469967842102,
-                0.0,
+                0,
                 -0.9562280178070068,
                 -1.329280018806458,
                 -1.620090007781982,
@@ -2202,7 +2283,7 @@
                 8.191415786743164,
                 -8.191419601440430
               ],
-              "y" : [ -0.50, -0.50, 0.50, 0.50 ]
+              "y" : [ -0.5, -0.5, 0.5, 0.5 ]
             }
           }
         ],
@@ -3179,7 +3260,7 @@
                 "string" : "images/brick.png"
               }
             ],
-            "density" : 0.009999999776482582,
+            "density" : 0.01,
             "friction" : 0.2,
             "id" : 45,
             "name" : "fixture12",
@@ -3467,7 +3548,7 @@
                 8.166678428649902,
                 -8.166670799255371
               ],
-              "y" : [ -0.50, -0.50, 0.50, 0.50 ]
+              "y" : [ -0.5, -0.5, 0.5, 0.5 ]
             }
           }
         ],
@@ -3518,7 +3599,7 @@
                 8.166678428649902,
                 -8.166670799255371
               ],
-              "y" : [ -0.50, -0.50, 0.50, 0.50 ]
+              "y" : [ -0.5, -0.5, 0.5, 0.5 ]
             }
           }
         ],
@@ -3555,8 +3636,8 @@
             ],
             "vertices" : 
             {
-              "x" : [ 0.0 ],
-              "y" : [ 0.0 ]
+              "x" : [ 0 ],
+              "y" : [ 0 ]
             }
           }
         ],
@@ -3599,21 +3680,21 @@
                 5.928205490112305,
                 -5.928199768066406
               ],
-              "y" : [ -0.50, -0.50, 0.50, 0.50 ]
+              "y" : [ -0.5, -0.5, 0.5, 0.5 ]
             }
           }
         ],
         "id" : 43,
         "linearVelocity" : 
         {
-          "x" : -7.881848951285519e-009,
-          "y" : -8.958388207247481e-006
+          "x" : 0,
+          "y" : -1.343717212876072e-005
         },
         "massData-I" : 139.8802337646484,
         "massData-center" : 
         {
           "x" : 2.851282033589087e-006,
-          "y" : -2.483526939656144e-009
+          "y" : 0
         },
         "massData-mass" : 11.85640525817871,
         "name" : "body7",
@@ -4037,7 +4118,7 @@
         "flip" : false,
         "id" : 4,
         "name" : "image1",
-        "opacity" : 0.50,
+        "opacity" : 0.5,
         "scale" : 11.74570369720459
       },
       
@@ -4055,7 +4136,7 @@
         "flip" : false,
         "id" : 5,
         "name" : "image1",
-        "opacity" : 0.50,
+        "opacity" : 0.5,
         "scale" : 11.74570369720459
       },
       
@@ -4073,7 +4154,7 @@
         "flip" : false,
         "id" : 6,
         "name" : "image1",
-        "opacity" : 0.50,
+        "opacity" : 0.5,
         "scale" : 11.74570369720459
       },
       
@@ -4091,7 +4172,7 @@
         "flip" : false,
         "id" : 7,
         "name" : "image1",
-        "opacity" : 0.50,
+        "opacity" : 0.5,
         "scale" : 11.74570369720459
       },
       
@@ -4109,7 +4190,7 @@
         "flip" : false,
         "id" : 8,
         "name" : "image1",
-        "opacity" : 0.50,
+        "opacity" : 0.5,
         "scale" : 11.74570369720459
       },
       
@@ -4275,7 +4356,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : -3.0
+          "y" : -3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4292,7 +4373,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : 3.0
+          "y" : 3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4309,7 +4390,7 @@
         "body" : 24,
         "center" : 
         {
-          "x" : 2.0,
+          "x" : 2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4327,7 +4408,7 @@
         "body" : 24,
         "center" : 
         {
-          "x" : -2.0,
+          "x" : -2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4346,7 +4427,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : -3.0
+          "y" : -3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4363,7 +4444,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : 3.0
+          "y" : 3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4451,7 +4532,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : 3.0
+          "y" : 3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4468,7 +4549,7 @@
         "body" : 32,
         "center" : 
         {
-          "x" : 2.0,
+          "x" : 2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4486,7 +4567,7 @@
         "body" : 32,
         "center" : 
         {
-          "x" : -2.0,
+          "x" : -2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4504,7 +4585,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : 3.0
+          "y" : 3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4521,7 +4602,7 @@
         "body" : 35,
         "center" : 
         {
-          "x" : 2.0,
+          "x" : 2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4540,7 +4621,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : -3.0
+          "y" : -3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4557,7 +4638,7 @@
         "body" : 35,
         "center" : 
         {
-          "x" : -2.0,
+          "x" : -2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4575,7 +4656,7 @@
         "body" : 36,
         "center" : 
         {
-          "x" : 2.0,
+          "x" : 2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4594,7 +4675,7 @@
         "center" : 
         {
           "x" : 0,
-          "y" : -3.0
+          "y" : -3
         },
         "file" : "images/egg.png",
         "filter" : 1,
@@ -4643,7 +4724,7 @@
         "body" : 36,
         "center" : 
         {
-          "x" : -2.0,
+          "x" : -2,
           "y" : 0
         },
         "file" : "images/egg.png",
@@ -4668,7 +4749,7 @@
         "flip" : false,
         "id" : 40,
         "name" : "horseleftgreen",
-        "opacity" : 0.50,
+        "opacity" : 0.5,
         "scale" : 14.81212902069092
       },
       
