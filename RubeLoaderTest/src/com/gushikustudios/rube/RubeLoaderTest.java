@@ -1,6 +1,5 @@
 package com.gushikustudios.rube;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,10 +11,12 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -45,6 +46,7 @@ import com.gushikustudios.rube.loader.serializers.utils.RubeImage;
 public class RubeLoaderTest implements ApplicationListener, InputProcessor, ContactListener
 {
    private OrthographicCamera camera;
+   private OrthographicCamera textCam;
    private RubeSceneLoader loader;
    private RubeScene scene;
    private Box2DDebugRenderer debugRender;
@@ -70,14 +72,18 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    private int mVelocityIter = 8;
    private int mPositionIter = 3;
    private float mSecondsPerStep = 1 / 60f;
-
+   
    private static final float MAX_DELTA_TIME = 0.25f;
+   
+   private BitmapFont bitmapFont;
 
    @Override
    public void create()
    {
       float w = Gdx.graphics.getWidth();
       float h = Gdx.graphics.getHeight();
+      
+      bitmapFont = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"), false);
 
       Gdx.input.setInputProcessor(this);
 
@@ -88,6 +94,11 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       camera.position.set(50, 50, 0);
       camera.zoom = 1.8f;
       camera.update();
+      
+      textCam = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+      textCam.position.set(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2,0);
+      textCam.zoom = 1;
+      textCam.update();
 
       loader = new RubeSceneLoader();
 
@@ -197,7 +208,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
       float delta = Gdx.graphics.getDeltaTime();
-
+      
       if (delta > MAX_DELTA_TIME)
       {
          delta = MAX_DELTA_TIME;
@@ -232,6 +243,11 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
          }
          polygonBatch.end();
       }
+      
+      batch.setProjectionMatrix(textCam.combined);
+      batch.begin();
+      bitmapFont.draw(batch,"fps: " + Gdx.graphics.getFramesPerSecond(),10,20);
+      batch.end();
 
       debugRender.render(mWorld, camera.combined);
    }
@@ -275,6 +291,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    private void createPolySpatialsFromRubeFixtures(RubeScene scene)
    {
       Array<Body> bodies = scene.getBodies();
+      
+      EarClippingTriangulator ect = new EarClippingTriangulator();
 
       if ((bodies != null) && (bodies.size > 0))
       {
@@ -286,12 +304,12 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
             Body body = bodies.get(i);
             bodyPos.set(body.getPosition());
 
-            ArrayList<Fixture> fixtures = body.getFixtureList();
+            Array<Fixture> fixtures = body.getFixtureList();
 
-            if ((fixtures != null) && (fixtures.size() > 0))
+            if ((fixtures != null) && (fixtures.size > 0))
             {
                // for each fixture on the body...
-               for (int j = 0; j < fixtures.size(); j++)
+               for (int j = 0; j < fixtures.size; j++)
                {
                   Fixture fixture = fixtures.get(j);
 
@@ -334,7 +352,9 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               vertices[k * 2] = mTmp.x * PolySpatial.PIXELS_PER_METER;
                               vertices[k * 2 + 1] = mTmp.y * PolySpatial.PIXELS_PER_METER;
                            }
-                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           
+                           short [] triangleIndices = ect.computeTriangles(vertices).toArray();
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, Color.WHITE);
                            polySpatials.add(spatial);
                         }
@@ -347,7 +367,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               vertices[k * 2] = mTmp.x * PolySpatial.PIXELS_PER_METER;
                               vertices[k * 2 + 1] = mTmp.y * PolySpatial.PIXELS_PER_METER;
                            }
-                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           short [] triangleIndices = ect.computeTriangles(vertices).toArray();
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, body, Color.WHITE);
                            polySpatials.add(spatial);
                         }
@@ -375,7 +396,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               vertices[k*2] = mTmp.x*PolySpatial.PIXELS_PER_METER;
                               vertices[k*2+1] = mTmp.y*PolySpatial.PIXELS_PER_METER;
                            }
-                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           short [] triangleIndices = ect.computeTriangles(vertices).toArray();
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, Color.WHITE);
                            polySpatials.add(spatial);
                         }
@@ -393,7 +415,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               vertices[k*2] = mTmp.x*PolySpatial.PIXELS_PER_METER;
                               vertices[k*2+1] = mTmp.y*PolySpatial.PIXELS_PER_METER;
                            }
-                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           short [] triangleIndices = ect.computeTriangles(vertices).toArray();
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, body, Color.WHITE);
                            polySpatials.add(spatial);
                         }

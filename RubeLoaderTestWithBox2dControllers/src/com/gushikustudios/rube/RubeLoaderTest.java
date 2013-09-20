@@ -1,6 +1,5 @@
 package com.gushikustudios.rube;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -34,7 +34,6 @@ import com.badlogic.gdx.utils.Array;
 import com.gushikustudios.box2d.controllers.B2BuoyancyController;
 import com.gushikustudios.box2d.controllers.B2Controller;
 import com.gushikustudios.box2d.controllers.B2GravityController;
-import com.gushikustudios.rube.RubeScene;
 import com.gushikustudios.rube.loader.RubeSceneLoader;
 import com.gushikustudios.rube.loader.serializers.utils.RubeImage;
 
@@ -290,6 +289,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    private void createPolySpatialsFromRubeFixtures(RubeScene scene)
    {
       Array<Body> bodies = scene.getBodies();
+      
+      EarClippingTriangulator ect = new EarClippingTriangulator();
 
       if ((bodies != null) && (bodies.size > 0))
       {
@@ -301,12 +302,12 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
             Body body = bodies.get(i);
             bodyPos.set(body.getPosition());
 
-            ArrayList<Fixture> fixtures = body.getFixtureList();
+            Array<Fixture> fixtures = body.getFixtureList();
 
-            if ((fixtures != null) && (fixtures.size() > 0))
+            if ((fixtures != null) && (fixtures.size > 0))
             {
                // for each fixture on the body...
-               for (int j = 0; j < fixtures.size(); j++)
+               for (int j = 0; j < fixtures.size; j++)
                {
                   Fixture fixture = fixtures.get(j);
 
@@ -349,7 +350,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               vertices[k * 2] = mTmp.x * PolySpatial.PIXELS_PER_METER;
                               vertices[k * 2 + 1] = mTmp.y * PolySpatial.PIXELS_PER_METER;
                            }
-                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           short [] triangleIndices = ect.computeTriangles(vertices).toArray();
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, Color.WHITE);
                            polySpatials.add(spatial);
                         }
@@ -362,7 +364,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               vertices[k * 2] = mTmp.x * PolySpatial.PIXELS_PER_METER;
                               vertices[k * 2 + 1] = mTmp.y * PolySpatial.PIXELS_PER_METER;
                            }
-                           PolygonRegion region = new PolygonRegion(textureRegion, vertices);
+                           short [] triangleIndices = ect.computeTriangles(vertices).toArray();
+                           PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, body, Color.WHITE);
                            polySpatials.add(spatial);
                         }
