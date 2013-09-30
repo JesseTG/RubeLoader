@@ -128,7 +128,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
          for (int i = 0; i < bodies.size; i++)
          {
             Body body = bodies.get(i);
-            String gameInfo = scene.getCustom(body, "GameInfo", (String) null);
+            String gameInfo = (String) scene.getCustom(body, "GameInfo", null);
             if (gameInfo != null)
             {
                System.out.println("GameInfo custom property: " + gameInfo);
@@ -143,7 +143,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
          for (int i = 0; i < fixtures.size; i++)
          {
             Fixture fixture = fixtures.get(i);
-            int controllerType = scene.getCustom(fixture, "ControllerType", 0);
+            int controllerType = (Integer) scene.getCustom(fixture, "ControllerType", 0);
             switch (controllerType)
             {
                case B2Controller.BUOYANCY_CONTROLLER:
@@ -167,12 +167,12 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                      }
                      B2BuoyancyController b2c = new B2BuoyancyController(
                               B2BuoyancyController.DEFAULT_SURFACE_NORMAL, // assume up
-                           scene.getCustom(fixture, "ControllerVelocity", B2BuoyancyController.DEFAULT_FLUID_VELOCITY),
+                              (Vector2)scene.getCustom(fixture, "ControllerVelocity", B2BuoyancyController.DEFAULT_FLUID_VELOCITY),
                               mWorld.getGravity(),
                               maxHeight,
                               fixture.getDensity(),
-                              scene.getCustom(fixture, "LinearDrag", B2BuoyancyController.DEFAULT_LINEAR_DRAG),
-                              scene.getCustom(fixture, "AngularDrag", B2BuoyancyController.DEFAULT_ANGULAR_DRAG));
+                              (Float)scene.getCustom(fixture, "LinearDrag", B2BuoyancyController.DEFAULT_LINEAR_DRAG),
+                              (Float)scene.getCustom(fixture, "AngularDrag", B2BuoyancyController.DEFAULT_ANGULAR_DRAG));
                      fixture.setUserData(b2c); // reference back to the controller from the fixture (see
                                                // beginContact/endContact)
                      mB2Controllers.add(b2c); // add it to the list so it can be stepped later
@@ -182,7 +182,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                case B2Controller.GRAVITY_CONTROLLER:
                {
                   B2GravityController b2c = new B2GravityController();
-                  b2c = new B2GravityController(scene.getCustom(fixture, "ControllerVelocity",
+                  b2c = new B2GravityController((Vector2)scene.getCustom(fixture, "ControllerVelocity",
                         B2GravityController.DEFAULT_GRAVITY));
                   fixture.setUserData(b2c);
                   mB2Controllers.add(b2c);
@@ -311,7 +311,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                {
                   Fixture fixture = fixtures.get(j);
 
-                  String textureName = scene.getCustom(fixture, "TextureMask", (String) null);
+                  String textureName = (String) scene.getCustom(fixture, "TextureMask", null);
                   if (textureName != null)
                   {
                      String textureFileName = "data/" + textureName;

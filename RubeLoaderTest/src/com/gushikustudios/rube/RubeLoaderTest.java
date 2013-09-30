@@ -133,7 +133,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
          for (int i = 0; i < bodies.size; i++)
          {
             Body body = bodies.get(i);
-            String gameInfo = scene.getCustom(body, "GameInfo", (String) null);
+            String gameInfo = (String)scene.getCustom(body, "GameInfo", null);
             if (gameInfo != null)
             {
                System.out.println("GameInfo custom property: " + gameInfo);
@@ -150,12 +150,12 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       // 
       // validate the custom settings attached to world object..
       //
-      boolean testBool = scene.getCustom(mWorld, "testCustomBool", false);
-      int testInt = scene.getCustom(mWorld, "testCustomInt", 0);
-      float testFloat = scene.getCustom(mWorld, "testCustomFloat", (float)0);
-      Color color = scene.getCustom(mWorld, "testCustomColor", (Color)null);
-      Vector2 vec = scene.getCustom(mWorld, "testCustomVec2", (Vector2)null);
-      String string = scene.getCustom(mWorld, "testCustomString", (String)null);
+      boolean testBool = (Boolean)scene.getCustom(mWorld, "testCustomBool", false);
+      int testInt = (Integer)scene.getCustom(mWorld, "testCustomInt", 0);
+      float testFloat = (Float)scene.getCustom(mWorld, "testCustomFloat", 0);
+      Color color = (Color)scene.getCustom(mWorld, "testCustomColor", null);
+      Vector2 vec = (Vector2)scene.getCustom(mWorld, "testCustomVec2", null);
+      String string = (String)scene.getCustom(mWorld, "testCustomString", null);
       
       if (testBool == false)
       {
@@ -313,7 +313,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                {
                   Fixture fixture = fixtures.get(j);
 
-                  String textureName = scene.getCustom(fixture, "TextureMask", (String) null);
+                  String textureName = (String)scene.getCustom(fixture, "TextureMask", null);
                   if (textureName != null)
                   {
                      String textureFileName = "data/" + textureName;

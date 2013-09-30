@@ -21,41 +21,19 @@ import com.gushikustudios.rube.loader.serializers.utils.RubeImage;
  */
 public class RubeScene 
 {
-   public class CustomProperties {
-
-      Map<String, Integer> m_customPropertyMap_int;
-      Map<String, Float> m_customPropertyMap_float;
-      Map<String, String> m_customPropertyMap_string;
-      Map<String, Vector2> m_customPropertyMap_Vector2;
-      Map<String, Boolean> m_customPropertyMap_bool;
-      Map<String, Color> m_customPropertyMap_color;
-      
-      public CustomProperties() {
-         m_customPropertyMap_int = new HashMap<String, Integer>();
-         m_customPropertyMap_float = new HashMap<String, Float>();
-         m_customPropertyMap_string = new HashMap<String, String>();
-         m_customPropertyMap_Vector2 = new HashMap<String, Vector2>();
-         m_customPropertyMap_bool = new HashMap<String, Boolean>();
-         m_customPropertyMap_color = new HashMap<String, Color>();
-      }
-   }
    
 	/** Box2D {@link World} */
 	private World world;
 	
 	private Array<Body> mBodies;
+	private Array<RubeImage> mImages;
+	private Map<Body,Array<RubeImage>> mBodyImageMap;
 	private Array<Fixture> mFixtures;
 	private Array<Joint> mJoints;
-	private Array<RubeImage> mImages;
+	private Map<String,Array<Object>> mItemsByName;
+	private Map<Object,Map<String, Object>> mCustomPropertiesMap;
 	
-	private Map<String,Array<Body>> mBodiesByName;
-	private Map<String,Array<Fixture>> mFixturesByName;
-	private Map<String,Array<Joint>> mJointsByName;
-	private Map<String,Array<RubeImage>> mImagesByName;
 	
-	private Map<Object,CustomProperties> mCustomPropertiesMap;
-	
-	private Map<Body,Array<RubeImage>> mBodyImageMap;
 	
 	/** Simulation steps wanted per second */
 	public int   stepsPerSecond;
@@ -70,13 +48,10 @@ public class RubeScene
 		positionIterations 	= RubeDefaults.World.positionIterations;
 		velocityIterations 	= RubeDefaults.World.velocityIterations;
 		
-		mCustomPropertiesMap = new HashMap<Object, CustomProperties>();
+		mCustomPropertiesMap = new HashMap<Object, Map<String, Object>>();
 		mBodyImageMap = new HashMap<Body,Array<RubeImage>>();
 		
-		mBodiesByName = new HashMap<String,Array<Body>>();
-		mFixturesByName = new HashMap<String,Array<Fixture>>();
-		mJointsByName = new HashMap<String,Array<Joint>>();
-		mImagesByName = new HashMap<String,Array<RubeImage>>();
+		mItemsByName = new HashMap<String,Array<Object>>();
 		
 	}
 	
@@ -86,9 +61,9 @@ public class RubeScene
 		Array<Map<String,?>> customProperties = json.readValue("customProperties", Array.class, HashMap.class, jsonData);
 		if (customProperties != null)
 		{
-			for (int i = 0; i < customProperties.size; i++)
+			for (Map<String, ?> property : customProperties)
 			{
-				Map<String, ?> property = customProperties.get(i);
+
 				String propertyName = (String)property.get("name");
 				if (property.containsKey("string"))
 				{
@@ -104,7 +79,7 @@ public class RubeScene
 				   try
 				   {
 					setCustom(item, propertyName, (Float) property.get("float"));
-				}
+				   }
 				   catch (Exception ex)
 				   {
 				      // probably a string.
@@ -130,7 +105,8 @@ public class RubeScene
 		}
 	}
 	
-   public CustomProperties getCustomPropertiesForItem(Object item, boolean createIfNotExisting)
+	
+   public Map<String, Object> getCustomPropertiesForItem(Object item, boolean createIfNotExisting)
    {
       if (mCustomPropertiesMap.containsKey(item))
       {
@@ -142,105 +118,44 @@ public class RubeScene
          return null;
       }
 
-      CustomProperties props = new CustomProperties();
+      Map<String, Object> props = new HashMap<String, Object>();
       mCustomPropertiesMap.put(item, props);
 
       return props;
    }
+   
+   
+   public void setCustom(Object item, String propertyName, Object object)
+   {
+      getCustomPropertiesForItem(item, true).put(propertyName, object);
+   }
+   
 
-   public void setCustom(Object item, String propertyName, String val)
+   public Object getCustom(Object item, String propertyName, Object defaultVal)
    {
-      getCustomPropertiesForItem(item, true).m_customPropertyMap_string.put(propertyName, val);
-   }
-   
-   public void setCustom(Object item, String propertyName, Integer val)
-   {
-      getCustomPropertiesForItem(item, true).m_customPropertyMap_int.put(propertyName, val);
-   }
-   
-   public void setCustom(Object item, String propertyName, Float val)
-   {
-      getCustomPropertiesForItem(item, true).m_customPropertyMap_float.put(propertyName, val);
-   }
-   
-   public void setCustom(Object item, String propertyName, Boolean val)
-   {
-      getCustomPropertiesForItem(item, true).m_customPropertyMap_bool.put(propertyName, val);
-   }
-   
-   public void setCustom(Object item, String propertyName, Vector2 val)
-   {
-      getCustomPropertiesForItem(item, true).m_customPropertyMap_Vector2.put(propertyName, val);
-   }
-   
-   public void setCustom(Object item, String propertyName, Color color)
-   {
-      getCustomPropertiesForItem(item, true).m_customPropertyMap_color.put(propertyName, color);
-   }
-   
-   
-   public String getCustom(Object item, String propertyName, String defaultVal)
-   {
-      CustomProperties props = getCustomPropertiesForItem(item, false);
+      Map<String, Object> props= getCustomPropertiesForItem(item, false);
       if (null == props)
          return defaultVal;
-      if (props.m_customPropertyMap_string.containsKey(propertyName))
-         return props.m_customPropertyMap_string.get(propertyName);
-      return defaultVal;
-	}
-	
-   public int getCustom(Object item, String propertyName, int defaultVal)
-   {
-      CustomProperties props = getCustomPropertiesForItem(item, false);
-      if (null == props)
-         return defaultVal;
-      if (props.m_customPropertyMap_int.containsKey(propertyName))
-         return props.m_customPropertyMap_int.get(propertyName);
-      return defaultVal;
-   }
-   
-   public boolean getCustom(Object item, String propertyName, boolean defaultVal)
-   {
-      CustomProperties props = getCustomPropertiesForItem(item, false);
-      if (null == props)
-         return defaultVal;
-      if (props.m_customPropertyMap_bool.containsKey(propertyName))
-         return props.m_customPropertyMap_bool.get(propertyName);
-      return defaultVal;
-   }
-   
-   public float getCustom(Object item, String propertyName, float defaultVal)
-   {
-      CustomProperties props = getCustomPropertiesForItem(item, false);
-      if (null == props)
-         return defaultVal;
-      if (props.m_customPropertyMap_float.containsKey(propertyName))
-         return props.m_customPropertyMap_float.get(propertyName);
-      return defaultVal;
-   }
-   
-   public Vector2 getCustom(Object item, String propertyName, Vector2 defaultVal)
-   {
-      CustomProperties props = getCustomPropertiesForItem(item, false);
-      if (null == props)
-         return defaultVal;
-      if (props.m_customPropertyMap_Vector2.containsKey(propertyName))
-         return props.m_customPropertyMap_Vector2.get(propertyName);
-      return defaultVal;
-   }
-   
-   public Color getCustom(Object item, String propertyName, Color defaultVal)
-   {
-      CustomProperties props = getCustomPropertiesForItem(item, false);
-      if (null == props)
-         return defaultVal;
-      if (props.m_customPropertyMap_color.containsKey(propertyName))
+      if (props.containsKey(propertyName))
       {
-         return props.m_customPropertyMap_color.get(propertyName);
+         return props.get(propertyName);
       }
       return defaultVal;
    }
-	
+   
+   public Object getCustom(Object item, String propertyName)
+   {
+      Map<String, Object> props= getCustomPropertiesForItem(item, false);
+      if (null == props)
+         return null;
+      if (props.containsKey(propertyName))
+      {
+         return props.get(propertyName);
+      }
+      return null;
+   }
+   
+   
    public void clear()
    {
       if (mBodies != null)
@@ -297,6 +212,8 @@ public class RubeScene
    {
       return mBodies;
    }
+   
+   
 
    public void addFixtures(Array<Fixture> fixtures)
    {
@@ -348,7 +265,6 @@ public class RubeScene
    public void setMappedImage(Body body, RubeImage image)
    {
       Array<RubeImage> images = mBodyImageMap.get(body);
-      
       // if the mapping hasn't been created yet...
       if (images == null)
       {
@@ -369,90 +285,27 @@ public class RubeScene
       return mBodyImageMap.get(body);
    }
    
-   public void putNamed(String name, Body body)
+   public void putNamed(String name, Object item)
    {
-      Array<Body> bodies = mBodiesByName.get(name);
+      Array<Object> items = mItemsByName.get(name);
       
-      if (bodies == null)
+      if (items == null)
       {
-         bodies = new Array<Body>(false,1);
-         bodies.add(body);
-         mBodiesByName.put(name,bodies);
+         items = new Array<Object>(false,1);
+         items.add(item);
+         mItemsByName.put(name,items);
       }
       else
       {
-         bodies.add(body);
+    	  items.add(item);
       }
    }
    
-   public void putNamed(String name, Joint joint)
-   {
-      Array<Joint> joints = mJointsByName.get(name);
-      
-      if (joints == null)
-      {
-         joints = new Array<Joint>(false,1);
-         joints.add(joint);
-         mJointsByName.put(name, joints);
-      }
-      else
-      {
-         joints.add(joint);
-      }
-   }
-   
-   public void putNamed(String name, Fixture fixture)
-   {
-      Array<Fixture> fixtures = mFixturesByName.get(name);
-      
-      if (fixtures == null)
-      {
-         fixtures = new Array<Fixture>(false,1);
-         fixtures.add(fixture);
-         mFixturesByName.put(name, fixtures);
-      }
-      else
-      {
-         fixtures.add(fixture);
-      }
-   }
-   
-   public void putNamed(String name, RubeImage image)
-   {
-      Array<RubeImage> images = mImagesByName.get(name);
-      
-      if (images == null)
-      {
-         images = new Array<RubeImage>(false,1);
-         images.add(image);
-         mImagesByName.put(name,images);
-      }
-      else
-      {
-         images.add(image);
-      }
-   }
    
    @SuppressWarnings("unchecked")
    public <T> Array<T> getNamed(Class<T> type, String name)
    {
-      if (type == Body.class)
-      {
-         return (Array<T>) mBodiesByName.get(name);
-      }
-      else if (type == Joint.class)
-      {
-         return (Array<T>) mJointsByName.get(name);
-      }
-      else if (type == Fixture.class)
-      {
-         return (Array<T>) mFixturesByName.get(name);
-      }
-      else if (type == RubeImage.class)
-      {
-         return (Array<T>) mImagesByName.get(name);
-      }
-      return null;
+	  return (Array<T>) mItemsByName.get(name);  
    }
    
    public void printStats() {
