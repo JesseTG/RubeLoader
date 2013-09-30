@@ -173,7 +173,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       {
          throw new GdxRuntimeException("testCustomColor is reporting null!");
       }
-      if ((color.r != 17f/255) || (color.g != 29f/255) || (color.b != 43f/255) || (color.a != 1))
+      if ((color.r != 17f/255) || (color.g != 29f/255) || (color.b != 43f/255) || (color.a != 61f/255))
       {
          throw new GdxRuntimeException("testCustomColor not read correctly!  Expected: " + new Color(17f/255,29f/255,43f/255,61f/255) + " Actual: " + color);
       }

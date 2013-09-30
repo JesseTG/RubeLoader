@@ -43,13 +43,6 @@
     
     {
       "class" : "world",
-      "displayName" : "testCustomString",
-      "name" : "testCustomString",
-      "type" : "string"
-    },
-    
-    {
-      "class" : "world",
       "displayName" : "testCustomFloat",
       "name" : "testCustomFloat",
       "type" : "float"
@@ -60,6 +53,13 @@
       "displayName" : "testCustomInt",
       "name" : "testCustomInt",
       "type" : "int"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "testCustomString",
+      "name" : "testCustomString",
+      "type" : "string"
     },
     
     {
@@ -135,7 +135,7 @@
       },
       
       {
-        "color" : [ 17, 29, 43, 255 ],
+        "color" : [ 17, 29, 43, 61 ],
         "name" : "testCustomColor"
       }
     ],
@@ -1004,7 +1004,7 @@
                 0.8417459726333618,
                 1.519700050354004,
                 1.353469967842102,
-                0,
+                0.0,
                 -0.9562280178070068,
                 -1.329280018806458,
                 -1.620090007781982,
@@ -3636,8 +3636,8 @@
             ],
             "vertices" : 
             {
-              "x" : [ 0 ],
-              "y" : [ 0 ]
+              "x" : [ 0.0 ],
+              "y" : [ 0.0 ]
             }
           }
         ],
@@ -3687,14 +3687,14 @@
         "id" : 43,
         "linearVelocity" : 
         {
-          "x" : 0,
-          "y" : -1.343717212876072e-005
+          "x" : -3.901114986604171e-009,
+          "y" : -1.791595605027396e-005
         },
         "massData-I" : 139.8802337646484,
         "massData-center" : 
         {
           "x" : 2.851282033589087e-006,
-          "y" : 0
+          "y" : -2.483526939656144e-009
         },
         "massData-mass" : 11.85640525817871,
         "name" : "body7",
