@@ -6,6 +6,8 @@ import java.util.Map;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -34,6 +36,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.gushikustudios.rube.loader.RubeSceneAsyncLoader;
 import com.gushikustudios.rube.loader.RubeSceneLoader;
 import com.gushikustudios.rube.loader.serializers.utils.RubeImage;
 
@@ -45,21 +48,21 @@ import com.gushikustudios.rube.loader.serializers.utils.RubeImage;
  */
 public class RubeLoaderTest implements ApplicationListener, InputProcessor, ContactListener
 {
-   private OrthographicCamera camera;
-   private OrthographicCamera textCam;
-   private RubeSceneLoader loader;
-   private RubeScene scene;
-   private Box2DDebugRenderer debugRender;
+   private OrthographicCamera mCam;
+   private OrthographicCamera mTextCam;
+   private RubeScene mScene;
+   private Box2DDebugRenderer mDebugRender;
 
-   private Array<SimpleSpatial> spatials; // used for rendering rube images
-   private Array<PolySpatial> polySpatials;
-   private Map<String, Texture> textureMap;
-   private Map<Texture, TextureRegion> textureRegionMap;
+   private Array<SimpleSpatial> mSpatials; // used for rendering rube images
+   private Array<PolySpatial> mPolySpatials;
+   private Map<String, Texture> mTextureMap;
+   private Map<Texture, TextureRegion> mTextureRegionMap;
 
    private static final Vector2 mTmp = new Vector2(); // shared by all objects
    private static final Vector2 mTmp3 = new Vector2(); // shared during polygon creation
-   private SpriteBatch batch;
-   private PolygonSpriteBatch polygonBatch;
+   private SpriteBatch mBatch;
+   private PolygonSpriteBatch mPolyBatch;
+   private AssetManager mAssetManager;
 
    // used for pan and scanning with the mouse.
    private Vector3 mCamPos;
@@ -73,67 +76,248 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    private int mPositionIter = 3;
    private float mSecondsPerStep = 1 / 60f;
    
+   private float mFlashLoadingText;
+   private boolean mHideLoadingText;
+   
    private static final float MAX_DELTA_TIME = 0.25f;
    
-   private BitmapFont bitmapFont;
+   private BitmapFont mBitmapFont;
+   
+   private static final String RUBE_SCENE_FILE = "data/palm.json";
+   private static final float FLASH_RATE = 0.25f;
+   
+   private enum GAME_STATE
+   {
+      STARTING,
+      LOADING,
+      RUNNING
+   };
+   
+   private GAME_STATE mState;
+   private GAME_STATE mPrevState;
+   private GAME_STATE mNextState;
+   
+   private boolean mUseAssetManager;
 
+   public RubeLoaderTest()
+   {
+      this(false);
+   }
+   
+   public RubeLoaderTest(boolean useAssetManager)
+   {
+      mUseAssetManager = useAssetManager;
+   }
+   
    @Override
    public void create()
    {
       float w = Gdx.graphics.getWidth();
       float h = Gdx.graphics.getHeight();
       
-      bitmapFont = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"), false);
+      mBitmapFont = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"), false);
 
       Gdx.input.setInputProcessor(this);
 
       mCamPos = new Vector3();
       mCurrentPos = new Vector3();
 
-      camera = new OrthographicCamera(100, 100 * h / w);
-      camera.position.set(50, 50, 0);
-      camera.zoom = 1.8f;
-      camera.update();
+      mCam = new OrthographicCamera(100, 100 * h / w);
+      mCam.position.set(50, 50, 0);
+      mCam.zoom = 1.8f;
+      mCam.update();
       
-      textCam = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-      textCam.position.set(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2,0);
-      textCam.zoom = 1;
-      textCam.update();
+      mTextCam = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+      mTextCam.position.set(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2,0);
+      mTextCam.zoom = 1;
+      mTextCam.update();
 
-      loader = new RubeSceneLoader();
+      mDebugRender = new Box2DDebugRenderer();
 
-      scene = loader.loadScene(Gdx.files.internal("data/palm.json"));
+      mBatch = new SpriteBatch();
+      mPolyBatch = new PolygonSpriteBatch();
+      
+      mTextureMap = new HashMap<String, Texture>();
+      mTextureRegionMap = new HashMap<Texture, TextureRegion>();
+      
+      mState = mNextState = GAME_STATE.STARTING;
+   }
 
-      debugRender = new Box2DDebugRenderer();
-
-      batch = new SpriteBatch();
-      polygonBatch = new PolygonSpriteBatch();
-
-      textureMap = new HashMap<String, Texture>();
-      textureRegionMap = new HashMap<Texture, TextureRegion>();
-
-      createSpatialsFromRubeImages(scene);
-      createPolySpatialsFromRubeFixtures(scene);
-
-      mWorld = scene.getWorld();
-      // configure simulation settings
-      mVelocityIter = scene.velocityIterations;
-      mPositionIter = scene.positionIterations;
-      if (scene.stepsPerSecond != 0)
+   @Override
+   public void dispose()
+   {
+      if (mBatch != null)
       {
-         mSecondsPerStep = 1f / scene.stepsPerSecond;
+         mBatch.dispose();
+      }
+      
+      if (mPolyBatch != null)
+      {
+         mPolyBatch.dispose();
+      }
+      
+      if (mDebugRender != null)
+      {
+         mDebugRender.dispose();
+      }
+      
+      if (mWorld != null)
+      {
+         mWorld.dispose();
+      }
+      
+      if (mAssetManager != null)
+      {
+         mAssetManager.dispose();
+      }
+   }
+
+   @Override
+   public void render()
+   {
+      float delta = Gdx.graphics.getDeltaTime();
+      
+      // cap maximum delta time...
+      if (delta > MAX_DELTA_TIME)
+      {
+         delta = MAX_DELTA_TIME;
+      }
+      
+      update(delta);
+      present(delta);
+      
+      // state transitions here...
+      mPrevState = mState;
+      mState = mNextState;
+      
+   }
+   
+   /**
+    * This method is used for game logic updates.
+    * 
+    * @param delta
+    */
+   private void update(float delta)
+   {
+      // game logic here...
+      
+      mFlashLoadingText += delta;
+      if (mFlashLoadingText > FLASH_RATE)
+      {
+         mFlashLoadingText = 0;
+         mHideLoadingText = !mHideLoadingText;
+      }
+      switch (mState)
+      {
+         case STARTING:
+            initiateSceneLoad();
+            break;
+            
+         case LOADING:
+            processSceneLoad();
+            break;
+            
+         case RUNNING:
+            updatePhysics(delta);
+            break;
+      }
+   }
+   
+   /**
+    * The present() method is for drawing / rendering...
+    * 
+    * @param delta
+    */
+   private void present(float delta)
+   {
+      // game rendering logic here...
+      Gdx.gl.glClearColor(0, 0, 0, 1);
+      Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+      
+      switch (mState)
+      {
+         case STARTING:
+         case LOADING:
+            if (!mHideLoadingText)
+            {
+               mBatch.setProjectionMatrix(mTextCam.combined);
+               mBatch.begin();
+               mBitmapFont.draw(mBatch,"Loading...",10,40);
+               mBatch.end();
+            }
+            break;
+            
+         case RUNNING:
+            renderWorld(delta);
+            break;
+      }
+   }
+   
+   /**
+    * Kicks off asset manager if selected... 
+    * 
+    */
+   private void initiateSceneLoad()
+   {
+      if (mUseAssetManager)
+      {
+         // kick off asset manager operations...
+         mAssetManager = new AssetManager();
+         mAssetManager.setLoader(RubeScene.class, new RubeSceneAsyncLoader(new InternalFileHandleResolver()));
+         mAssetManager.load(RUBE_SCENE_FILE, RubeScene.class);
+      }
+      mNextState = GAME_STATE.LOADING;
+   }
+   
+   /**
+    * Either performs a blocking load or a poll on the asset manager load...
+    */
+   private void processSceneLoad()
+   {
+      if (mAssetManager == null)
+      {
+         // perform a blocking load...
+         RubeSceneLoader loader = new RubeSceneLoader();
+         mScene = loader.loadScene(Gdx.files.internal(RUBE_SCENE_FILE));
+         processScene();
+         mNextState = GAME_STATE.RUNNING;
+      }
+      else if (mAssetManager.update())
+      {
+         mScene = mAssetManager.get(RUBE_SCENE_FILE, RubeScene.class);
+         processScene();
+         mNextState = GAME_STATE.RUNNING;
+      }
+   }
+   
+   /**
+    * Builds up world based on info from the scene...
+    */
+   private void processScene()
+   {
+      createSpatialsFromRubeImages(mScene);
+      createPolySpatialsFromRubeFixtures(mScene);
+
+      mWorld = mScene.getWorld();
+      // configure simulation settings
+      mVelocityIter = mScene.velocityIterations;
+      mPositionIter = mScene.positionIterations;
+      if (mScene.stepsPerSecond != 0)
+      {
+         mSecondsPerStep = 1f / mScene.stepsPerSecond;
       }
       mWorld.setContactListener(this);
+      
       //
       // example of custom property handling
       //
-      Array<Body> bodies = scene.getBodies();
+      Array<Body> bodies = mScene.getBodies();
       if ((bodies != null) && (bodies.size > 0))
       {
          for (int i = 0; i < bodies.size; i++)
          {
             Body body = bodies.get(i);
-            String gameInfo = (String)scene.getCustom(body, "GameInfo", null);
+            String gameInfo = (String)mScene.getCustom(body, "GameInfo", null);
             if (gameInfo != null)
             {
                System.out.println("GameInfo custom property: " + gameInfo);
@@ -142,20 +326,84 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       }
 
       // Example of accessing data based on name
-      System.out.println("body0 count: " + scene.getNamed(Body.class, "body0").size);
+      System.out.println("body0 count: " + mScene.getNamed(Body.class, "body0").size);
       // Note: the scene has two fixture9 names defined, but these are in turn subdivided into multiple fixtures and thus appear several times...
-      System.out.println("fixture9 count: " + scene.getNamed(Fixture.class, "fixture9").size);
-      scene.printStats();
+      System.out.println("fixture9 count: " + mScene.getNamed(Fixture.class, "fixture9").size);
+      mScene.printStats();
       
+      testSceneSettings();
+      
+      mScene.clear(); // no longer need any scene references
+   }
+   
+   /**
+    * Use an accumulator to ensure a fixed delta for physics simulation...
+    * 
+    * @param delta
+    */
+   private void updatePhysics(float delta)
+   {
+      mAccumulator += delta;
+
+      while (mAccumulator >= mSecondsPerStep)
+      {
+         mWorld.step(mSecondsPerStep, mVelocityIter, mPositionIter);
+         mAccumulator -= mSecondsPerStep;
+      }
+   }
+   
+   /**
+    * Perform all world rendering...
+    * 
+    * @param delta
+    */
+   private void renderWorld(float delta)
+   {
+      if ((mSpatials != null) && (mSpatials.size > 0))
+      {
+         mBatch.setProjectionMatrix(mCam.combined);
+         mBatch.begin();
+         for (int i = 0; i < mSpatials.size; i++)
+         {
+            mSpatials.get(i).render(mBatch, 0);
+         }
+         mBatch.end();
+      }
+
+      if ((mPolySpatials != null) && (mPolySpatials.size > 0))
+      {
+         mPolyBatch.setProjectionMatrix(mCam.combined);
+         mPolyBatch.begin();
+         for (int i = 0; i < mPolySpatials.size; i++)
+         {
+            mPolySpatials.get(i).render(mPolyBatch, 0);
+         }
+         mPolyBatch.end();
+      }
+      
+      mBatch.setProjectionMatrix(mTextCam.combined);
+      mBatch.begin();
+      mBitmapFont.draw(mBatch,"fps: " + Gdx.graphics.getFramesPerSecond(),10,20);
+      mBatch.end();
+
+      mDebugRender.render(mWorld, mCam.combined);
+   }
+   
+   /**
+    * Validation on custom settings in the RUBE file.
+    * 
+    */
+   private void testSceneSettings()
+   {
       // 
       // validate the custom settings attached to world object..
       //
-      boolean testBool = (Boolean)scene.getCustom(mWorld, "testCustomBool", false);
-      int testInt = (Integer)scene.getCustom(mWorld, "testCustomInt", 0);
-      float testFloat = (Float)scene.getCustom(mWorld, "testCustomFloat", 0);
-      Color color = (Color)scene.getCustom(mWorld, "testCustomColor", null);
-      Vector2 vec = (Vector2)scene.getCustom(mWorld, "testCustomVec2", null);
-      String string = (String)scene.getCustom(mWorld, "testCustomString", null);
+      boolean testBool = (Boolean)mScene.getCustom(mWorld, "testCustomBool", false);
+      int testInt = (Integer)mScene.getCustom(mWorld, "testCustomInt", 0);
+      float testFloat = (Float)mScene.getCustom(mWorld, "testCustomFloat", 0);
+      Color color = (Color)mScene.getCustom(mWorld, "testCustomColor", null);
+      Vector2 vec = (Vector2)mScene.getCustom(mWorld, "testCustomVec2", null);
+      String string = (String)mScene.getCustom(mWorld, "testCustomString", null);
       
       if (testBool == false)
       {
@@ -193,63 +441,8 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       {
          throw new GdxRuntimeException("testCustomString is not read correctly!  Expected: Excelsior! Actual: " + string);
       }
-      scene.clear(); // no longer need any scene references
-   }
-
-   @Override
-   public void dispose()
-   {
-   }
-
-   @Override
-   public void render()
-   {
-      Gdx.gl.glClearColor(0, 0, 0, 1);
-      Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-      float delta = Gdx.graphics.getDeltaTime();
       
-      if (delta > MAX_DELTA_TIME)
-      {
-         delta = MAX_DELTA_TIME;
-      }
-
-      mAccumulator += delta;
-
-      while (mAccumulator >= mSecondsPerStep)
-      {
-         mWorld.step(mSecondsPerStep, mVelocityIter, mPositionIter);
-         mAccumulator -= mSecondsPerStep;
-      }
-
-      if ((spatials != null) && (spatials.size > 0))
-      {
-         batch.setProjectionMatrix(camera.combined);
-         batch.begin();
-         for (int i = 0; i < spatials.size; i++)
-         {
-            spatials.get(i).render(batch, 0);
-         }
-         batch.end();
-      }
-
-      if ((polySpatials != null) && (polySpatials.size > 0))
-      {
-         polygonBatch.setProjectionMatrix(camera.combined);
-         polygonBatch.begin();
-         for (int i = 0; i < polySpatials.size; i++)
-         {
-            polySpatials.get(i).render(polygonBatch, 0);
-         }
-         polygonBatch.end();
-      }
-      
-      batch.setProjectionMatrix(textCam.combined);
-      batch.begin();
-      bitmapFont.draw(batch,"fps: " + Gdx.graphics.getFramesPerSecond(),10,20);
-      batch.end();
-
-      debugRender.render(mWorld, camera.combined);
+      System.out.println("*** TESTING PASSED ***");
    }
 
    /**
@@ -263,21 +456,21 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       Array<RubeImage> images = scene.getImages();
       if ((images != null) && (images.size > 0))
       {
-         spatials = new Array<SimpleSpatial>();
+         mSpatials = new Array<SimpleSpatial>();
          for (int i = 0; i < images.size; i++)
          {
             RubeImage image = images.get(i);
             mTmp.set(image.width, image.height);
             String textureFileName = "data/" + image.file;
-            Texture texture = textureMap.get(textureFileName);
+            Texture texture = mTextureMap.get(textureFileName);
             if (texture == null)
             {
                texture = new Texture(textureFileName);
-               textureMap.put(textureFileName, texture);
+               mTextureMap.put(textureFileName, texture);
             }
             SimpleSpatial spatial = new SimpleSpatial(texture, image.flip, image.body, image.color, mTmp, image.center,
                   image.angleInRads * MathUtils.radiansToDegrees);
-            spatials.add(spatial);
+            mSpatials.add(spatial);
          }
       }
    }
@@ -296,13 +489,15 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
 
       if ((bodies != null) && (bodies.size > 0))
       {
-         polySpatials = new Array<PolySpatial>();
+         mPolySpatials = new Array<PolySpatial>();
          Vector2 bodyPos = new Vector2();
          // for each body in the scene...
          for (int i = 0; i < bodies.size; i++)
          {
             Body body = bodies.get(i);
             bodyPos.set(body.getPosition());
+            
+            float bodyAngle = body.getAngle()*MathUtils.radiansToDegrees;
 
             Array<Fixture> fixtures = body.getFixtureList();
 
@@ -317,19 +512,19 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                   if (textureName != null)
                   {
                      String textureFileName = "data/" + textureName;
-                     Texture texture = textureMap.get(textureFileName);
+                     Texture texture = mTextureMap.get(textureFileName);
                      TextureRegion textureRegion = null;
                      if (texture == null)
                      {
                         texture = new Texture(textureFileName);
                         texture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-                        textureMap.put(textureFileName, texture);
+                        mTextureMap.put(textureFileName, texture);
                         textureRegion = new TextureRegion(texture);
-                        textureRegionMap.put(texture, textureRegion);
+                        mTextureRegionMap.put(texture, textureRegion);
                      }
                      else
                      {
-                        textureRegion = textureRegionMap.get(texture);
+                        textureRegion = mTextureRegionMap.get(texture);
                      }
 
                      // only handle polygons at this point -- no chain, edge, or circle fixtures.
@@ -346,7 +541,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                            {
 
                               shape.getVertex(k, mTmp);
-                              mTmp.rotate(body.getAngle() * MathUtils.radiansToDegrees);
+                              mTmp.rotate(bodyAngle);
                               mTmp.add(bodyPos); // convert local coordinates to world coordinates to that textures are
                                                  // aligned
                               vertices[k * 2] = mTmp.x * PolySpatial.PIXELS_PER_METER;
@@ -356,7 +551,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                            short [] triangleIndices = ect.computeTriangles(vertices).toArray();
                            PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, Color.WHITE);
-                           polySpatials.add(spatial);
+                           mPolySpatials.add(spatial);
                         }
                         else
                         {
@@ -370,7 +565,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                            short [] triangleIndices = ect.computeTriangles(vertices).toArray();
                            PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, body, Color.WHITE);
-                           polySpatials.add(spatial);
+                           mPolySpatials.add(spatial);
                         }
                      }
                      else if (fixture.getType() == Shape.Type.Circle)
@@ -379,7 +574,6 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                         float radius = shape.getRadius();
                         int vertexCount = (int)(12f * radius);
                         float [] vertices = new float[vertexCount*2];
-                        System.out.println("SpatialFactory: radius: " + radius);
                         if (body.getType() == BodyType.StaticBody)
                         {
                            mTmp3.set(shape.getPosition());
@@ -390,16 +584,16 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                               // rotate it by 1/vertexCount * k
                               mTmp.rotate(360f*k/vertexCount);
                               // add it to the position.
-                              mTmp.rotate(body.getAngle()*MathUtils.radiansToDegrees);
                               mTmp.add(mTmp3);
-                              mTmp.add(bodyPos); // convert local coordinates to world coordinates to that textures are aligned
+                              mTmp.rotate(bodyAngle);
+                              mTmp.add(bodyPos); // convert local coordinates to world coordinates so that textures are aligned
                               vertices[k*2] = mTmp.x*PolySpatial.PIXELS_PER_METER;
                               vertices[k*2+1] = mTmp.y*PolySpatial.PIXELS_PER_METER;
                            }
                            short [] triangleIndices = ect.computeTriangles(vertices).toArray();
                            PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, Color.WHITE);
-                           polySpatials.add(spatial);
+                           mPolySpatials.add(spatial);
                         }
                         else
                         {
@@ -418,7 +612,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
                            short [] triangleIndices = ect.computeTriangles(vertices).toArray();
                            PolygonRegion region = new PolygonRegion(textureRegion, vertices, triangleIndices);
                            PolySpatial spatial = new PolySpatial(region, body, Color.WHITE);
-                           polySpatials.add(spatial);
+                           mPolySpatials.add(spatial);
                         }
                      }
                   }
@@ -468,7 +662,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    public boolean touchDown(int screenX, int screenY, int pointer, int button)
    {
       mCamPos.set(screenX, screenY, 0);
-      camera.unproject(mCamPos);
+      mCam.unproject(mCamPos);
       return true;
    }
 
@@ -483,9 +677,9 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    public boolean touchDragged(int screenX, int screenY, int pointer)
    {
       mCurrentPos.set(screenX, screenY, 0);
-      camera.unproject(mCurrentPos);
-      camera.position.sub(mCurrentPos.sub(mCamPos));
-      camera.update();
+      mCam.unproject(mCurrentPos);
+      mCam.position.sub(mCurrentPos.sub(mCamPos));
+      mCam.update();
       return true;
    }
 
@@ -499,12 +693,12 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    @Override
    public boolean scrolled(int amount)
    {
-      camera.zoom += (amount * 0.1f);
-      if (camera.zoom < 0.1f)
+      mCam.zoom += (amount * 0.1f);
+      if (mCam.zoom < 0.1f)
       {
-         camera.zoom = 0.1f;
+         mCam.zoom = 0.1f;
       }
-      camera.update();
+      mCam.update();
       return true;
    }
 

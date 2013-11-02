@@ -3,6 +3,7 @@ package com.gushikustudios.rube;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -19,14 +20,14 @@ public class RubeLoaderTestDesktop {
 	/**
 	 * @param args
 	 */
-	public static void mainLaunch(int width, int height)
+	public static void mainLaunch(int width, int height, boolean useAssetManager)
 	{
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = GAME_NAME;
 		cfg.useGL20 = true;
 		cfg.width = width;
 		cfg.height = height;
-		new LwjglApplication(new RubeLoaderTest(), cfg);
+		new LwjglApplication(new RubeLoaderTest(useAssetManager), cfg);
 	}
 	
 	public static void main(String[] args)
@@ -61,12 +62,15 @@ public class RubeLoaderTestDesktop {
 	            JComboBox resVals = new JComboBox(resolutions);
 	            resVals.setSelectedItem(resolutions[5]);
 	            
+	            JCheckBox useAssetManager = new JCheckBox("Use Asset Manager");
+	            useAssetManager.setSelected(false);
 	            
 	            final JComponent[] inputs = new JComponent[] {
 	                  new JLabel("Select simulated resolution"),
 	                  resVals,
 	                  new JLabel("Select simulated orientation"),
 	                  modeVals,
+	                  useAssetManager
 	            };
 	            int result = JOptionPane.showConfirmDialog(null, inputs,"Sim Options",JOptionPane.OK_CANCEL_OPTION);
 	            System.out.println("User Selected: " + resVals.getSelectedItem() + " " + modeVals.getSelectedItem() + " " + result);
@@ -88,7 +92,7 @@ public class RubeLoaderTestDesktop {
 	                  m.find();
 	                  int w = Integer.parseInt(m.group(isPortrait ? 1 : 2));
 	                  int h = Integer.parseInt(m.group(isPortrait ? 2 : 1));
-	                  mainLaunch(w, h);
+	                  mainLaunch(w, h, useAssetManager.isSelected());
 	               }
 	            }
 	         }

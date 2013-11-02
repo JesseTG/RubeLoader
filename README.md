@@ -32,8 +32,31 @@ Creating a physics world populated with Box2D objects only takes two lines:
 
 		RubeSceneLoader loader = new RubeSceneLoader();
 		RubeScene scene = loader.loadScene(Gdx.files.internal("data/palm.json"));
+		
+There are two ways to approach loading a RUBE scene, either using a blocking load (as shown above), or using asynchronous loading via Asset Manager.  By using
+asynchronous loading, your app can continue to render while the scene is loaded in.  This is helpful for loading in relatively large RUBE scene files and
+displaying an active "loading" indication to the user.  This is demoed by the flashing "Loading..." text in the test file.  To take advantage of this, you 
+will need to divide your loading operations into two: first, kicking off the asynchronous load; second, polling the asynchronous load for completion and
+then performing scene processing when it does complete.  
 
-Several scene objects are created by the loadScene method.  These objects can be used for post-processing operations:
+Example asynchronous load startup code:
+
+	  // kick off asset manager operations...
+      mAssetManager = new AssetManager();
+      mAssetManager.setLoader(RubeScene.class, new RubeSceneAsyncLoader(new InternalFileHandleResolver()));
+      mAssetManager.load(RUBE_SCENE_FILE, RubeScene.class);
+         
+Example asynchronous load polling code:
+
+      // if the asset manager has completed...
+      if (mAssetManager.update())
+      {
+         // get the scene and process it...
+         mScene = mAssetManager.get(RUBE_SCENE_FILE, RubeScene.class);
+         processScene();
+      }
+
+Several scene objects are created by the loading methods.  These objects can be used for post-processing operations:
 
 	* scene.getWorld(): This method returns the Box2D physics world.  After loading, it is populated with the bodies, joints, and fixtures from the JSON file.
 	* scene.getBodies(): This method returns an array of bodies created

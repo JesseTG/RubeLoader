@@ -14,6 +14,6 @@ public class MainActivity extends AndroidApplication {
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         cfg.useGL20 = true;
         
-        initialize(new RubeLoaderTest(), cfg);
+        initialize(new RubeLoaderTest(true), cfg);
     }
 }
