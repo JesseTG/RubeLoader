@@ -30,6 +30,7 @@ public class RubeSceneSyncLoader extends SynchronousAssetLoader<RubeScene, RubeS
       return mLoader.loadScene(file);
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
    public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, RubeSceneParameters parameter)
    {

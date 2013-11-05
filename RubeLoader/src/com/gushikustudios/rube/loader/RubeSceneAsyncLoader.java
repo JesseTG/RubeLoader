@@ -24,6 +24,7 @@ public class RubeSceneAsyncLoader extends AsynchronousAssetLoader<RubeScene, Rub
       mLoader = new RubeSceneLoader();
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
    public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, RubeSceneParameters parameter)
    {

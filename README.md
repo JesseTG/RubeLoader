@@ -28,6 +28,13 @@ The loader consists of several serializers to read in objects from the RUBE JSON
 	* RubeWorld
 	* Vector2
 
+Scene Prep
+==========
+RubeLoader cannot load a .rube file.  The data must first be exported by to a JSON format that RubeLoader understands.  To do this, open up your scene's .rube file using
+RUBE and then select: File > Export Scene > Save Raw Info.  This will result in a .JSON file that RubeLoader can then interpret.
+
+Loading a Scene
+===============
 Creating a physics world populated with Box2D objects only takes two lines:
 
 		RubeSceneLoader loader = new RubeSceneLoader();
@@ -67,8 +74,8 @@ Several scene objects are created by the loading methods.  These objects can be 
 	* scene.getCustom(): This method allows you to retrieve custom property info from an object.
 	* scene.getNamed(): This method allows you to retrieve a scene object based on name.  Since multiple objects can have the same name, this returns an Array<> type.
 	
-If the scene data is no longer needed, scene.clear() can be executed to free up any references.  Note that this does not alter or delete the world.  It is up
-to the underlying application to handle body deletions from the Box2D physics world.
+If the scene data is no longer needed, scene.clear() can be executed to free up any references.  Note that this does not alter or delete the world!  It is up
+to the underlying application to handle body, etc. deletions of the Box2D physics world.
 
 RubeLoaderTest
 ==============
