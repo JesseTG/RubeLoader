@@ -110,7 +110,7 @@ Box2dController Setup
 1. Clone https://github.com/tescott/box2dcontrollers
 2. Import the Box2DControllers into your workspace.
 3. Resolve any dependency issues.
-4. Right-click on RubeLoaderTestWithBox2dCotnrollers-desktop > Run As > Java Application > RubeLoaderTestDesktop
+4. Right-click on RubeLoaderTestWithBox2dControllers-desktop > Run As > Java Application > RubeLoaderTestDesktop
 
 Related Software:
 ==================
@@ -118,6 +118,10 @@ Related Software:
 - Android SDK
 - RUBE: https://www.iforce2d.net/rube/ (optional if you wish to create your own scenes)
 - Box2dControllers: https://github.com/tescott/box2dcontrollers (optional)
+
+Games that use RubeLoader
+=========================
+[Dragon Swoopers](https://play.google.com/store/apps/details?id=com.gushikustudios.baublebird "Dragon Swoopers on Google Play")
 
 Screenshot / video of test example
 ==================================
