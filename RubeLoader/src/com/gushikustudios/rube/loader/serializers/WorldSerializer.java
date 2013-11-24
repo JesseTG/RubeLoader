@@ -37,30 +37,54 @@ public class WorldSerializer extends ReadOnlySerializer<World>
 	@Override
 	public World read(Json json, JsonValue jsonData, Class type) 
 	{
-		boolean allowSleep = json.readValue("allowSleep", boolean.class, RubeDefaults.World.allowSleep, jsonData);
-		boolean autoClearForces = json.readValue("autoClearForces", boolean.class, RubeDefaults.World.autoClearForces, jsonData);
-		boolean continuousPhysics = json.readValue("continuousPhysics", boolean.class, RubeDefaults.World.continuousPhysics, jsonData);
-		boolean warmStarting = json.readValue("warmStarting", boolean.class, RubeDefaults.World.warmStarting, jsonData);
-		
-		Vector2 gravity = json.readValue("gravity", Vector2.class, RubeDefaults.World.gravity, jsonData);
-		
-		World world = new World(gravity, allowSleep);
-		world.setAutoClearForces(autoClearForces);
-		world.setContinuousPhysics(continuousPhysics);
-		world.setWarmStarting(warmStarting);
+	   World world = scene.getWorld();
+	   if (world == null)
+	   {
+	      boolean allowSleep = json.readValue("allowSleep", boolean.class, RubeDefaults.World.allowSleep, jsonData);
+	      boolean autoClearForces = json.readValue("autoClearForces", boolean.class, RubeDefaults.World.autoClearForces, jsonData);
+	      boolean continuousPhysics = json.readValue("continuousPhysics", boolean.class, RubeDefaults.World.continuousPhysics, jsonData);
+	      boolean warmStarting = json.readValue("warmStarting", boolean.class, RubeDefaults.World.warmStarting, jsonData);
+
+	      Vector2 gravity = json.readValue("gravity", Vector2.class, RubeDefaults.World.gravity, jsonData);
+
+		   world = new World(gravity, allowSleep);
+		   world.setAutoClearForces(autoClearForces);
+		   world.setContinuousPhysics(continuousPhysics);
+		   world.setWarmStarting(warmStarting);
+		}
+		// else ignore world settings and use the ones that were previously loaded
 		scene.parseCustomProperties(json, world, jsonData);
 		
 		// Bodies
 		bodySerializer.setWorld(world);
 		Array<Body> bodies = json.readValue("body", Array.class, Body.class, jsonData);
-		scene.setBodies(bodies);
-		
+		if (bodies != null)
+		{
+		   if (scene.getBodies() == null)
+		   {
+		      scene.setBodies(bodies);
+		   }
+		   else
+		   {
+		      scene.addBodies(bodies);
+		   }
+		}
 		// Joints
 		// joints are done in two passes because gear joints reference other joints
 		// First joint pass
 		jointSerializer.init(world, bodies, null);
 		Array<Joint> joints = json.readValue("joint", Array.class, Joint.class, jsonData);
-		scene.setJoints(joints);
+		if (joints != null)
+		{
+		   if (scene.getJoints() == null)
+		   {
+		      scene.setJoints(joints);
+		   }
+		   else
+		   {
+		      scene.getJoints().addAll(joints);
+		   }
+		}
 		// Second joint pass
 		jointSerializer.init(world, bodies, joints);
 		joints = json.readValue("joint", Array.class, Joint.class, jsonData);
@@ -68,9 +92,17 @@ public class WorldSerializer extends ReadOnlySerializer<World>
 		
 		// Images
 		Array<RubeImage> images = json.readValue("image", Array.class, RubeImage.class, jsonData);
-		scene.setImages(images);
 		if (images != null)
 		{
+		   if (scene.getImages() == null)
+		   {
+		      scene.setImages(images);
+		   }
+		   else
+		   {
+		      scene.getImages().addAll(images);
+		   }
+		   
 		   for (int i = 0; i < images.size; i++)
 		   {
 		      RubeImage image = images.get(i);

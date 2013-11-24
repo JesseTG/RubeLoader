@@ -32,8 +32,7 @@ public class RubeScene
 	private Array<Joint> mJoints;
 	private Map<String,Array<Object>> mItemsByName;
 	private Map<Object,Map<String, Object>> mCustomPropertiesMap;
-	
-	
+	private int mBodyOffset; // determines where bodies have been inserted.  Needed for image referencing for separate files.
 	
 	/** Simulation steps wanted per second */
 	public int   stepsPerSecond;
@@ -206,6 +205,20 @@ public class RubeScene
    public void setBodies(Array<Body> mBodies)
    {
       this.mBodies = mBodies;
+   }
+   
+   public void addBodies(Array<Body> bodies)
+   {
+      if (bodies != null)
+      {
+         mBodyOffset = mBodies.size; // determine where the new bodies are inserted at
+         mBodies.addAll(bodies); // appends the passed body array to the end of the current body array
+      }
+   }
+   
+   public int getCurrentBodyOffset()
+   {
+      return mBodyOffset;
    }
 
    public Array<Body> getBodies()

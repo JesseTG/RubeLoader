@@ -35,7 +35,7 @@ public class RubeSceneAsyncLoader extends AsynchronousAssetLoader<RubeScene, Rub
    public void loadAsync(AssetManager manager, String fileName, FileHandle file, RubeSceneParameters parameter)
    {
       mScene = null;
-      mScene = mLoader.loadScene(file);
+      mScene = mLoader.addScene(file);
    }
 
    @Override

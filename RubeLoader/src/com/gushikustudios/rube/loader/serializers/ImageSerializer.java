@@ -37,6 +37,7 @@ public class ImageSerializer extends ReadOnlySerializer<RubeImage>
       
       if(bodyIndex >= 0)
       {
+         bodyIndex += scene.getCurrentBodyOffset();
          if ((bodies != null) && (bodyIndex < bodies.size))
          {
             image.body = bodies.get(bodyIndex);

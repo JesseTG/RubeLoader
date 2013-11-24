@@ -20,14 +20,14 @@ public class RubeLoaderTestDesktop {
 	/**
 	 * @param args
 	 */
-	public static void mainLaunch(int width, int height, boolean useAssetManager)
+	public static void mainLaunch(int width, int height, boolean useAssetManager, int rubeListIndex)
 	{
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = GAME_NAME;
 		cfg.useGL20 = true;
 		cfg.width = width;
 		cfg.height = height;
-		new LwjglApplication(new RubeLoaderTest(useAssetManager), cfg);
+		new LwjglApplication(new RubeLoaderTest(useAssetManager, rubeListIndex), cfg);
 	}
 	
 	public static void main(String[] args)
@@ -43,6 +43,10 @@ public class RubeLoaderTestDesktop {
 	            String[] modes = { "portrait", "landscape" };
 	            JComboBox modeVals = new JComboBox(modes);
 	            modeVals.setSelectedItem(modes[1]); // default to landscape
+	            
+	            String[] rubeFiles = { "single", "multiple" };
+	            JComboBox rubeVals = new JComboBox(rubeFiles);
+	            rubeVals.setSelectedItem(rubeFiles[0]);
 
 	            // -------------------------------------------------------------
 	            // Resolution selection
@@ -70,6 +74,8 @@ public class RubeLoaderTestDesktop {
 	                  resVals,
 	                  new JLabel("Select simulated orientation"),
 	                  modeVals,
+	                  new JLabel("Select RUBE file list"),
+	                  rubeVals,
 	                  useAssetManager
 	            };
 	            int result = JOptionPane.showConfirmDialog(null, inputs,"Sim Options",JOptionPane.OK_CANCEL_OPTION);
@@ -92,7 +98,7 @@ public class RubeLoaderTestDesktop {
 	                  m.find();
 	                  int w = Integer.parseInt(m.group(isPortrait ? 1 : 2));
 	                  int h = Integer.parseInt(m.group(isPortrait ? 2 : 1));
-	                  mainLaunch(w, h, useAssetManager.isSelected());
+	                  mainLaunch(w, h, useAssetManager.isSelected(), rubeVals.getSelectedIndex());
 	               }
 	            }
 	         }

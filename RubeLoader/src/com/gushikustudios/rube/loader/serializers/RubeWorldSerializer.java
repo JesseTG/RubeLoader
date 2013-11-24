@@ -11,6 +11,7 @@ public class RubeWorldSerializer extends ReadOnlySerializer<RubeScene>
 {
 	private WorldSerializer mWorldSerializer;
 	private RubeScene scene;
+	private boolean mScenePopulated;
    
 	public RubeWorldSerializer(Json json)
 	{
@@ -20,15 +21,37 @@ public class RubeWorldSerializer extends ReadOnlySerializer<RubeScene>
 		json.setIgnoreUnknownFields(true);
 	}
 	
+	public void resetScene()
+	{
+	   if (scene != null)
+	   {
+	      World world = scene.getWorld();
+	      if (world != null)
+	      {
+	         world.dispose();
+	      }
+	      scene.clear();
+	   }
+	   mScenePopulated = false;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public RubeScene read(Json json, JsonValue jsonData, Class type) 
 	{
-		scene.stepsPerSecond 		= json.readValue("stepsPerSecond", 		int.class, RubeDefaults.World.stepsPerSecond, 		jsonData);
-		scene.positionIterations 	= json.readValue("positionIterations", 	int.class, RubeDefaults.World.positionIterations, 	jsonData);
-		scene.velocityIterations 	= json.readValue("velocityIterations", 	int.class, RubeDefaults.World.velocityIterations, 	jsonData);
-		scene.setWorld(json.readValue(World.class,	jsonData));
+	   if (!mScenePopulated)
+	   {
+	      scene.stepsPerSecond 		= json.readValue("stepsPerSecond", 		int.class, RubeDefaults.World.stepsPerSecond, 		jsonData);
+	      scene.positionIterations 	= json.readValue("positionIterations", 	int.class, RubeDefaults.World.positionIterations, 	jsonData);
+	      scene.velocityIterations 	= json.readValue("velocityIterations", 	int.class, RubeDefaults.World.velocityIterations, 	jsonData);
+	      scene.setWorld(json.readValue(World.class,	jsonData));
+	      mScenePopulated = true;
+	   }
+	   else
+	   {
+	      // ignore scene related items.  The read below will add items to the world and scene previously read
+	      json.readValue(World.class, jsonData);
+	   }
 		return scene;
 	}
-
 }

@@ -27,7 +27,7 @@ public class RubeSceneSyncLoader extends SynchronousAssetLoader<RubeScene, RubeS
    @Override
    public RubeScene load(AssetManager assetManager, String fileName, FileHandle file, RubeSceneParameters parameter)
    {
-      return mLoader.loadScene(file);
+      return mLoader.addScene(file);
    }
 
    @SuppressWarnings("rawtypes")

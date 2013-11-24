@@ -83,7 +83,21 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    
    private BitmapFont mBitmapFont;
    
-   private static final String RUBE_SCENE_FILE = "data/palm.json";
+   private static final String [][] RUBE_SCENE_FILE_LIST =
+   {
+      {
+         "data/palm.json"
+      },
+      {
+         "data/base.json",
+         "data/images1.json",
+         "data/bodies1.json",
+         "data/images2.json",
+         "data/bodies2.json",
+         "data/images3.json"
+      }
+   };
+   
    private static final float FLASH_RATE = 0.25f;
    
    private enum GAME_STATE
@@ -97,7 +111,10 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    private GAME_STATE mPrevState;
    private GAME_STATE mNextState;
    
+   private RubeSceneAsyncLoader mRubeSceneAsyncLoader;
    private boolean mUseAssetManager;
+   private int mRubeFileList;
+   private int mRubeFileIndex;
 
    public RubeLoaderTest()
    {
@@ -107,6 +124,12 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    public RubeLoaderTest(boolean useAssetManager)
    {
       mUseAssetManager = useAssetManager;
+   }
+   
+   public RubeLoaderTest(boolean useAssetManager, int rubeFileList)
+   {
+      this(useAssetManager);
+      mRubeFileList = rubeFileList;
    }
    
    @Override
@@ -263,8 +286,9 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       {
          // kick off asset manager operations...
          mAssetManager = new AssetManager();
-         mAssetManager.setLoader(RubeScene.class, new RubeSceneAsyncLoader(new InternalFileHandleResolver()));
-         mAssetManager.load(RUBE_SCENE_FILE, RubeScene.class);
+         mAssetManager.setLoader(RubeScene.class, mRubeSceneAsyncLoader = new RubeSceneAsyncLoader(new InternalFileHandleResolver()));
+         // kick things off..
+         mAssetManager.load(RUBE_SCENE_FILE_LIST[mRubeFileList][mRubeFileIndex], RubeScene.class);
       }
       mNextState = GAME_STATE.LOADING;
    }
@@ -278,15 +302,27 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       {
          // perform a blocking load...
          RubeSceneLoader loader = new RubeSceneLoader();
-         mScene = loader.loadScene(Gdx.files.internal(RUBE_SCENE_FILE));
+         for (int i = 0; i < RUBE_SCENE_FILE_LIST[mRubeFileList].length; i++)
+         {
+            // each iteration adds to the scene that is ultimately returned...
+            mScene = loader.addScene(Gdx.files.internal(RUBE_SCENE_FILE_LIST[mRubeFileList][mRubeFileIndex++]));
+         }
          processScene();
          mNextState = GAME_STATE.RUNNING;
       }
       else if (mAssetManager.update())
       {
-         mScene = mAssetManager.get(RUBE_SCENE_FILE, RubeScene.class);
-         processScene();
-         mNextState = GAME_STATE.RUNNING;
+         // each iteration adds to the scene that is ultimately returned...
+         mScene = mAssetManager.get(RUBE_SCENE_FILE_LIST[mRubeFileList][mRubeFileIndex++], RubeScene.class);
+         if (mRubeFileIndex < RUBE_SCENE_FILE_LIST[mRubeFileList].length)
+         {
+            mAssetManager.load(RUBE_SCENE_FILE_LIST[mRubeFileList][mRubeFileIndex], RubeScene.class);
+         }
+         else
+         {
+            processScene();
+            mNextState = GAME_STATE.RUNNING;
+         }
       }
    }
    
@@ -327,8 +363,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
 
       // Example of accessing data based on name
       System.out.println("body0 count: " + mScene.getNamed(Body.class, "body0").size);
-      // Note: the scene has two fixture9 names defined, but these are in turn subdivided into multiple fixtures and thus appear several times...
-      System.out.println("fixture9 count: " + mScene.getNamed(Fixture.class, "fixture9").size);
+      System.out.println("fixture0 count: " + mScene.getNamed(Fixture.class, "fixture0").size);
       mScene.printStats();
       
       testSceneSettings();
@@ -369,7 +404,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
          }
          mBatch.end();
       }
-
+      
       if ((mPolySpatials != null) && (mPolySpatials.size > 0))
       {
          mPolyBatch.setProjectionMatrix(mCam.combined);
