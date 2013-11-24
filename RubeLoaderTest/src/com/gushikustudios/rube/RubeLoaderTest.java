@@ -108,10 +108,10 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    };
    
    private GAME_STATE mState;
+   @SuppressWarnings("unused")
    private GAME_STATE mPrevState;
    private GAME_STATE mNextState;
    
-   private RubeSceneAsyncLoader mRubeSceneAsyncLoader;
    private boolean mUseAssetManager;
    private int mRubeFileList;
    private int mRubeFileIndex;
@@ -286,7 +286,7 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       {
          // kick off asset manager operations...
          mAssetManager = new AssetManager();
-         mAssetManager.setLoader(RubeScene.class, mRubeSceneAsyncLoader = new RubeSceneAsyncLoader(new InternalFileHandleResolver()));
+         mAssetManager.setLoader(RubeScene.class, new RubeSceneAsyncLoader(new InternalFileHandleResolver()));
          // kick things off..
          mAssetManager.load(RUBE_SCENE_FILE_LIST[mRubeFileList][mRubeFileIndex], RubeScene.class);
       }
@@ -697,21 +697,18 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    @Override
    public boolean keyDown(int keycode)
    {
-      // TODO Auto-generated method stub
       return false;
    }
 
    @Override
    public boolean keyUp(int keycode)
    {
-      // TODO Auto-generated method stub
       return false;
    }
 
    @Override
    public boolean keyTyped(char character)
    {
-      // TODO Auto-generated method stub
       return false;
    }
 
@@ -726,7 +723,6 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    @Override
    public boolean touchUp(int screenX, int screenY, int pointer, int button)
    {
-      // TODO Auto-generated method stub
       return false;
    }
 
@@ -743,7 +739,6 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    @Override
    public boolean mouseMoved(int screenX, int screenY)
    {
-      // TODO Auto-generated method stub
       return false;
    }
 
@@ -762,24 +757,20 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
    @Override
    public void beginContact(Contact contact)
    {
-      // TODO Auto-generated method stub
    }
 
    @Override
    public void endContact(Contact contact)
    {
-      // TODO Auto-generated method stub
    }
 
    @Override
    public void preSolve(Contact contact, Manifold oldManifold)
    {
-      // TODO Auto-generated method stub
    }
 
    @Override
    public void postSolve(Contact contact, ContactImpulse impulse)
    {
-      // TODO Auto-generated method stub
    }
 }
