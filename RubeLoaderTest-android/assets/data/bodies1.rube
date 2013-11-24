@@ -46,6 +46,20 @@
       "displayName" : "TextureMask",
       "name" : "TextureMask",
       "type" : "string"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "bodiesCommonCustom",
+      "name" : "bodiesCommonCustom",
+      "type" : "int"
+    },
+    
+    {
+      "class" : "world",
+      "displayName" : "bodies1Custom",
+      "name" : "bodies1Custom",
+      "type" : "int"
     }
   ],
   "metaworld" : 

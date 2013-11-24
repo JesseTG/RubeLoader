@@ -439,6 +439,28 @@ public class RubeLoaderTest implements ApplicationListener, InputProcessor, Cont
       Color color = (Color)mScene.getCustom(mWorld, "testCustomColor", null);
       Vector2 vec = (Vector2)mScene.getCustom(mWorld, "testCustomVec2", null);
       String string = (String)mScene.getCustom(mWorld, "testCustomString", null);
+      int bodies1Custom = (Integer)mScene.getCustom(mWorld, "bodies1Custom", 0);
+      int bodies2Custom = (Integer)mScene.getCustom(mWorld, "bodies2Custom", 0);
+      int bodiesCommonCustom = (Integer)mScene.getCustom(mWorld,"bodiesCommonCustom",0);
+      
+      // validate multiple file reading...
+      if (mRubeFileList == 1)
+      {
+         if (bodies1Custom != 1)
+         {
+            throw new GdxRuntimeException("bodies1Custom not read correctly! Expected: " + 1 + " Actual: " + bodies1Custom);
+         }
+         if (bodies2Custom != 2)
+         {
+            throw new GdxRuntimeException("bodies2Custom not read correctly! Expected: " + 2 + " Actual: " + bodies2Custom);            
+         }
+         // this is common between two files, but the last value will hold...
+         if (bodiesCommonCustom != 4321)
+         {
+            throw new GdxRuntimeException("bodiesCommonCustom not read correctly! Expected: " + 4321 + " Actual: " + bodiesCommonCustom);
+         }
+         System.out.println("Multiple file testing: PASSED!");
+      }
       
       if (testBool == false)
       {
