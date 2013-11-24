@@ -95,6 +95,20 @@ Notes:
 - The non-custom world properties of the first loaded scene will be used for all scenes (gravity, etc.)  Other JSON files will have no affect.
 - If two different JSON files contain the same custom world property, the last loaded JSON file's custom value will prevail
 
+Dealing with a pre-existing Box2D World
+=======================================
+It is possible to load in scene data to a pre-existing Box2D world.  See the following examples that demonstrate how to define this:
+
+		RubeSceneLoader loader = new RubeSceneLoader(new World(new Vector2(0,10),true));
+		RubeScene scene = loader.loadScene(Gdx.files.internal("data/palm.json"));
+		
+Using the asset manager and asynchronous loader:
+
+		mAssetManager = new AssetManager();
+		mAssetManager.setLoader(RubeScene.class, new RubeSceneAsyncLoader(new World(new Vector2(0,10),true),new InternalFileHandleResolver()));
+		mAssetManager.load(RUBE_SCENE_FILE, RubeScene.class);
+		
+
 RubeLoaderTest
 ==============
 This defines test file sets that include multiple & single files, custom properties and image info.  Use the mouse to pan and zoom.  On Android touch the screen to pan.

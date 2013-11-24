@@ -35,6 +35,15 @@ public class RubeWorldSerializer extends ReadOnlySerializer<RubeScene>
 	   mScenePopulated = false;
 	}
 	
+	public void usePreexistingWorld(World world)
+	{
+	   if (scene != null)
+	   {
+	      scene.setWorld(world);
+	   }
+	   mScenePopulated = true; // prevent a new world from being defined
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public RubeScene read(Json json, JsonValue jsonData, Class type) 

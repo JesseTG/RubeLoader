@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.SynchronousAssetLoader;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.gushikustudios.rube.RubeScene;
 
@@ -20,8 +21,19 @@ public class RubeSceneSyncLoader extends SynchronousAssetLoader<RubeScene, RubeS
    
    public RubeSceneSyncLoader(FileHandleResolver resolver)
    {
+      this(null,resolver);
+   }
+   
+   /**
+    * Specifies a pre-defined Box2D world to add scene objects to.
+    * 
+    * @param world
+    * @param resolver
+    */
+   public RubeSceneSyncLoader(World world, FileHandleResolver resolver)
+   {
       super(resolver);
-      mLoader = new RubeSceneLoader();
+      mLoader = new RubeSceneLoader(world);
    }
 
    @Override
