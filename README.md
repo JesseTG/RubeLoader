@@ -77,15 +77,33 @@ Several scene objects are created by the loading methods.  These objects can be 
 If the scene data is no longer needed, scene.clear() can be executed to free up any references.  Note that this does not alter or delete the world!  It is up
 to the underlying application to handle body, etc. deletions of the Box2D physics world.
 
+Multiple JSON file Support
+==========================
+It is possible to load several separate JSON files into a single, unified scene using the addScene() method.  All objects in the separate files will be found
+in the scene object returned.  Additionally, the related Box2D world will contain all bodies, etc. from across all scenes specified in this manner. 
+
+		RubeSceneLoader loader = new RubeSceneLoader();
+		RubeScene scene = loader.addScene(Gdx.files.internal("data/base.json"));
+		loader.addScene(Gdx.files.internal("data/images1.json"));
+		loader.addScene(Gdx.files.internal("data/bodies1.json"));
+		loader.addScene(Gdx.files.internal("data/images2.json"));
+		loader.addScene(Gdx.files.internal("data/bodies2.json"));
+		loader.addScene(Gdx.files.internal("data/images3.json"));
+		// the 'scene' object return above contains the accumulated objects from all loaded scenes
+
+Notes:
+- The non-custom world properties of the first loaded scene will be used for all scenes (gravity, etc.)  Other JSON files will have no affect.
+- If two different JSON files contain the same custom world property, the last loaded JSON file's custom value will prevail
+
 RubeLoaderTest
 ==============
-This loads in a test file that includes custom property and image info.  Use the mouse to pan and zoom.  On Android touch the screen to pan.
+This defines test file sets that include multiple & single files, custom properties and image info.  Use the mouse to pan and zoom.  On Android touch the screen to pan.
 
 The included rendering is for demo purposes only.  A SimpleSpatial class is used to render image data which may or may not be attached to a Box2D body.
 It is by no means efficient (textures are created for each image) and requires GL20 support for non-POT.  But, at the very least, should convey
 example usage.
 
-The palm.json scene has examples of both kinds of images - ones referenced based on a particular body and others referenced to the world origin. 
+The scenes include examples of both kinds of images - ones referenced based on a body and others referenced to the world origin. 
 
 General Setup
 -------------
