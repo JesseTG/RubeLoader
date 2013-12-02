@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
 /**
- * Simple class for spatial (image) rendering.  If a body reference is included, it's position will serve as the local coordinate system.
+ * Simple class for spatial (image) rendering.  If a body reference is included, its position will serve as the local coordinate system.
  * 
  * @author tescott
  *
