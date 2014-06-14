@@ -33,6 +33,12 @@ Scene Prep
 RubeLoader cannot load a .rube file.  The data must first be exported by to a JSON format that RubeLoader understands.  To do this, open up your scene's .rube file using
 RUBE and then select: File > Export Scene > Save Raw Info.  This will result in a .JSON file that RubeLoader can then interpret.
 
+RubeLoader and libgdx Integration
+==================
+YMMV with however you integrate things with libgdx.  This repo contains a snapshot of libgdx libs to make it fully self-contained.  This will cause conflict issues 
+if you bring the RubeLoader source into a libgdx project.  One easy way to address this is to delete the libs dir from the RubeLoader project and update it to point 
+to whatever libs or source you are using for your libgdx build.
+
 Loading a Scene
 ===============
 Creating a physics world populated with Box2D objects only takes two lines:
@@ -153,9 +159,9 @@ Related Software:
 
 Games that use RubeLoader
 =========================
-[Dragon Swoopers](https://play.google.com/store/apps/details?id=com.gushikustudios.baublebird "Dragon Swoopers on Google Play")
+- [Dragon Swoopers](https://play.google.com/store/apps/details?id=com.gushikustudios.baublebird "Dragon Swoopers on Google Play")
 
-Screenshot / video of test example
+Screenshot of test example
 ==================================
 ![Screenshot](https://raw.github.com/tescott/RubeLoader/master/screenshot.png)
-[![Youtube](https://raw.github.com/tescott/RubeLoader/master/youtubescreenshot.png)](http://youtu.be/hgo7Pxtcoyk)
+

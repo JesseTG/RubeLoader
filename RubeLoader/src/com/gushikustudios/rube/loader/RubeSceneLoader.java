@@ -32,7 +32,13 @@ public class RubeSceneLoader
     */
    public RubeSceneLoader(World world)
    {
-      json = new Json();
+      this(world,new Json());
+
+   }
+   
+   public RubeSceneLoader(World world, Json gameJson)
+   {
+      json = gameJson;
       json.setTypeName(null);
       json.setUsePrototypes(false);
       json.setSerializer(RubeScene.class, mRubeWorldSerializer = new RubeWorldSerializer(json));

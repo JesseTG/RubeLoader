@@ -24,7 +24,6 @@ public class RubeLoaderTestDesktop {
 	{
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = GAME_NAME;
-		cfg.useGL20 = true;
 		cfg.width = width;
 		cfg.height = height;
 		new LwjglApplication(new RubeLoaderTest(useAssetManager, rubeListIndex), cfg);
