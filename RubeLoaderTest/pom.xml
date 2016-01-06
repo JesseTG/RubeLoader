@@ -19,9 +19,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.bitfire</groupId>
-			<artifactId>libgdx-contribs-postprocessing</artifactId>
-			<version>${project.version}</version>
+			<groupId>com.gushikustudios</groupId>
+			<artifactId>RubeLoader</artifactId>
+			<version>1.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
