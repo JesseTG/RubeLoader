@@ -24,14 +24,14 @@
 		<module>loader</module>
 	</modules>
 
-	<!--profiles>
+	<profiles>
 		<profile>
-			<id>demo</id>
+			<id>test</id>
 			<modules>
-				<module>postprocessing-demo</module>
+				<module>RubeLoader test</module>
 			</modules>
 		</profile>
-	</profiles-->
+	</profiles>
 
 
 	<build>
