@@ -21,7 +21,7 @@
 	</repositories>
 	
 	<modules>
-		<module>rube</module>
+		<module>loader</module>
 	</modules>
 
 	<!--profiles>
