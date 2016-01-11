@@ -2,11 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.gushikustudios</groupId>
-	<artifactId>RubeLoader</artifactId>
+
+	<groupId>com.gushikustudios.rube</groupId>
+	<artifactId>RubeLoader-parent</artifactId>
 	<version>1.8.0</version>
 	<packaging>pom</packaging>
-	<name>RubeLoader</name>
+
+	<name>RubeLoader Parent</name>
 
 	<properties>
 		<gdx.version>1.8.0</gdx.version>
@@ -22,17 +24,12 @@
 	
 	<modules>
 		<module>RubeLoader</module>
+		<!--module>tests/RubeLoaderTest</module>
+		<module>tests/RubeLoaderTest-desktop</module>
+		<module>RubeLoaderTest-android</module-->
+		<!--module>RubeLoaderTestWithBox2dControllers</module>
+		<module>RubeLoaderTestWithBox2dControllers-desktop</module-->
 	</modules>
-
-	<profiles>
-		<profile>
-			<id>test</id>
-			<modules>
-				<module>RubeLoader test</module>
-			</modules>
-		</profile>
-	</profiles>
-
 
 	<build>
 		<plugins>
@@ -41,8 +38,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 		</plugins>
