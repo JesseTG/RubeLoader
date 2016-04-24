@@ -27,7 +27,7 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>RubeLoader</artifactId>
+			<artifactId>RubeLoader-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
