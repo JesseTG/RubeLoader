@@ -21,10 +21,10 @@
 	</repositories>
 	
 	<modules>
-		<module>loader</module>
-		<!--module>tests/RubeLoaderTest</module>
+		<module>RubeLoader</module>
+		<module>tests/RubeLoaderTest</module>
 		<module>tests/RubeLoaderTest-desktop</module>
-		<module>RubeLoaderTest-android</module-->
+		<!--module>RubeLoaderTest-android</module-->
 		<!--module>RubeLoaderTestWithBox2dControllers</module>
 		<module>RubeLoaderTestWithBox2dControllers-desktop</module-->
 	</modules>

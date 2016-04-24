@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.gushikustudios.rube</groupId>
-		<artifactId>RubeLoader-parent</artifactId>
+		<artifactId>RubeLoader</artifactId>
 		<version>1.8.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
-	
-	<artifactId>RubeLoaderTest</artifactId>
+
+	<artifactId>RubeLoader-test-core</artifactId>
 	<packaging>jar</packaging>
-	<name>RubeLoader Test Core</name>
-	
+	<name>test core</name>
+
 	<dependencies>
 		<dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>RubeLoader</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+			<groupId>com.badlogicgames.gdx</groupId>
+			<artifactId>gdx</artifactId>
+			<version>${gdx.version}</version>
+		</dependency>
 
+		<dependency>
+			<groupId>com.badlogicgames.gdx</groupId>
+			<artifactId>gdx-box2d</artifactId>
+			<version>${gdx.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>RubeLoader</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>
