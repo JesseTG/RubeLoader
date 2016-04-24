@@ -4,14 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.gushikustudios.rube</groupId>
-		<artifactId>RubeLoader-parent</artifactId>
+		<artifactId>RubeLoader</artifactId>
 		<version>1.8.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-	<artifactId>RubeLoader</artifactId>
+	<artifactId>RubeLoader-core</artifactId>
 	<packaging>jar</packaging>
-	<name>RubeLoader</name>
+	<name>loader</name>
 	
 	<dependencies>
 		<dependency>
